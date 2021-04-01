@@ -54,7 +54,9 @@ module.exports = (sequelize, DataTypes) => {
     referral: DataTypes.STRING,
     status: DataTypes.BOOLEAN,
     discountStatus: DataTypes.BOOLEAN,
-    discount: DataTypes.INTEGER
+    discount: DataTypes.INTEGER,
+    bank: DataTypes.STRING,
+    noRekening: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'User',

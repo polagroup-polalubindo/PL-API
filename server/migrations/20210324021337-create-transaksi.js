@@ -11,11 +11,20 @@ module.exports = {
       invoice: {
         type: Sequelize.STRING
       },
+      totalHarga: {
+        type: Sequelize.INTEGER
+      },
+      ongkosKirim: {
+        type: Sequelize.INTEGER
+      },
+      statusPesanan: {
+        type: Sequelize.STRING
+      },
       statusPembayaran: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.STRING
       },
       statusPengiriman: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.STRING
       },
       metodePembayaran: {
         type: Sequelize.STRING

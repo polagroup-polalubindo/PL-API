@@ -13,13 +13,13 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Cart.belongsTo(models.Produk)
       Cart.belongsTo(models.User)
+      Cart.belongsTo(models.Transaksi)
     }
   };
   Cart.init({
     produkId: DataTypes.INTEGER,
     userId: DataTypes.INTEGER,
-    ongkir: DataTypes.INTEGER,
-    totalPrice: DataTypes.INTEGER
+    transaksiId: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Cart',

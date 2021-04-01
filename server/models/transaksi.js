@@ -11,12 +11,16 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Transaksi.hasMany(models.Cart)
     }
   };
   Transaksi.init({
     invoice: DataTypes.STRING,
-    statusPembayaran: DataTypes.BOOLEAN,
-    statusPengiriman: DataTypes.BOOLEAN,
+    totalHarga: DataTypes.INTEGER,
+    ongkosKirim: DataTypes.INTEGER,
+    statusPesanan: DataTypes.STRING,
+    statusPembayaran: DataTypes.STRING,
+    statusPengiriman: DataTypes.STRING,
     metodePembayaran: DataTypes.STRING,
     namaRekening: DataTypes.STRING,
     jumlahBayar: DataTypes.INTEGER,

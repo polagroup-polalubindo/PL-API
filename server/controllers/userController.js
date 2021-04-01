@@ -1,4 +1,4 @@
-const { User, Komisi } = require("../models");
+const { User, Komisi, TransaksiKomisi } = require("../models");
 const { compareHash } = require("../helpers/bcrypt");
 const { generateToken } = require("../helpers/jwt");
 
@@ -44,7 +44,7 @@ class Controller {
   // CMS
 
   static getAllCustomer = async (req, res) => {
-    const data = await User.findAll({ include: Komisi });
+    const data = await User.findAll({ include: {model:Komisi,include:TransaksiKomisi} });
     return res.status(200).json(data);
   };
 
