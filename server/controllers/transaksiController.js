@@ -29,24 +29,27 @@ class Controller {
         namaPenerima,
         alamatPengiriman,
       } = req.body;
-      const edited = await Transaksi.update({
-        invoice,
-        totalHarga,
-        ongkosKirim,
-        statusPesanan,
-        statusPembayaran,
-        statusPengiriman,
-        metodePembayaran,
-        namaRekening,
-        jumlahBayar,
-        bankAsal,
-        bankTujuan,
-        namaPenerima,
-        alamatPengiriman,
-      },{where:{id:req.params.transaksiId}})
-      return res.status(200).json({message:`success editing transaksi`})
+      const edited = await Transaksi.update(
+        {
+          invoice,
+          totalHarga,
+          ongkosKirim,
+          statusPesanan,
+          statusPembayaran,
+          statusPengiriman,
+          metodePembayaran,
+          namaRekening,
+          jumlahBayar,
+          bankAsal,
+          bankTujuan,
+          namaPenerima,
+          alamatPengiriman,
+        },
+        { where: { id: req.params.transaksiId } }
+      );
+      return res.status(200).json({ message: `success editing transaksi` });
     } catch (error) {
-        return res.status(400).json(error)
+      return res.status(400).json(error);
     }
   };
 }

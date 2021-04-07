@@ -1,4 +1,4 @@
-const { Brand , Produk} = require("../models");
+const { Brand, Produk } = require("../models");
 
 class Controller {
   static getAllBrand = async (req, res) => {
@@ -53,16 +53,18 @@ class Controller {
     }
   };
 
-
-  static getProductList = async (req,res) =>{
+  static getProductList = async (req, res) => {
     try {
-      const ProductList = await Brand.findAll({where:{id:req.params.brandId},include:Produk})
-      return res.status(200).json(ProductList)
+      const ProductList = await Brand.findAll({
+        where: { id: req.params.brandId },
+        include: Produk,
+      });
+      return res.status(200).json(ProductList);
     } catch (error) {
-      console.log(error)
-      return res.status(400).json(error)
+      console.log(error);
+      return res.status(400).json(error);
     }
-  }
+  };
 }
 
 module.exports = Controller;

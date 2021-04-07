@@ -41,10 +41,27 @@ class Controller {
     }
   };
 
+  static getCustomerTransaction = async (req, res) => {
+    try {
+      const dataCustomer = await User.findOne({
+        where: { id: req.params.customerId },
+        include: { model: Komisi, include: TransaksiKomisi },
+      });
+      return res.status(200).json(dataCustomer);
+    } catch (error) {
+      return res.status(400).json(error);
+    }
+  };
+
   // CMS
 
   static getAllCustomer = async (req, res) => {
-    const data = await User.findAll({ include: {model:Komisi,include:TransaksiKomisi} });
+    const data = await User.findAll({
+      include: {
+        model: Komisi,
+        include: { model: TransaksiKomisi, include: User },
+      },
+    });
     return res.status(200).json(data);
   };
 

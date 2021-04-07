@@ -9,6 +9,9 @@ user.post('/register',controller.register)
 user.post('/login',controller.login)
 
 
+user.get('/customer/:customerId',authentication,controller.getCustomerTransaction)
+
+
 // CMS
 
 user.get('/customer',authentication,authorization,controller.getAllCustomer)
