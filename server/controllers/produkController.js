@@ -46,7 +46,6 @@ class Controller {
       });
       return res.status(201).json(newProduk);
     } catch (error) {
-      console.log(error);
       return res.status(400).json(error);
     }
   };
@@ -101,7 +100,6 @@ class Controller {
       );
       return res.status(200).json(editedProduk);
     } catch (error) {
-      console.log(error);
       return res.status(400).json(error);
     }
   };

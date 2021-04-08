@@ -1,5 +1,13 @@
-const { Cart, Produk, User, Transaksi, TransaksiKomisi, Komisi } = require("../models");
-const {generateToken} = require('../helpers/jwt')
+const {
+  Cart,
+  Produk,
+  User,
+  Transaksi,
+  TransaksiKomisi,
+  Komisi,
+} = require("../models");
+const { generateToken } = require("../helpers/jwt");
+const { transporter, checkOutMail } = require("../helpers/mailer");
 
 class Controller {
   static getCart = async (req, res) => {
@@ -19,18 +27,22 @@ class Controller {
       let access_token;
       let newUserId;
       if (userData) {
-        const {dataValues} = await User.create({ email:userData.email, phone:userData.phone, nama:userData.nama });
-        newUserId = dataValues.id
+        const { dataValues } = await User.create({
+          email: userData.email,
+          phone: userData.phone,
+          nama: userData.nama,
+        });
+        newUserId = dataValues.id;
         const komisiCustomer = await Komisi.create({ userId: dataValues.id });
-        access_token = generateToken(dataValues)
+        access_token = generateToken(dataValues);
       }
       const { id } = await Transaksi.create(transaksiData);
       value.map((val) => {
-        val.UserId = newUserId
+        val.UserId = newUserId;
         val.transaksiId = id;
       });
       const carts = await Cart.bulkCreate(value);
-      return res.status(201).json({carts,access_token});
+      return res.status(201).json({ carts, access_token });
     } catch (error) {
       return res.status(400).json(error);
     }
@@ -63,9 +75,13 @@ class Controller {
           userId: req.user.id,
           nominal: totalHarga,
         });
-        const getUserKomisiData = await Komisi.findOne({where:{id}})
-        getUserKomisiData.totalKomisi = getUserKomisiData.totalKomisi + Number(totalHarga)
-        const addTotalKomisi = await Komisi.update (getUserKomisiData.dataValues , {where:{id}})
+        const getUserKomisiData = await Komisi.findOne({ where: { id } });
+        getUserKomisiData.totalKomisi =
+          getUserKomisiData.totalKomisi + Number(totalHarga) * 0.1;
+        const addTotalKomisi = await Komisi.update(
+          getUserKomisiData.dataValues,
+          { where: { id } }
+        );
       }
       const edited = await Transaksi.update(
         {
@@ -85,7 +101,7 @@ class Controller {
         },
         { where: { id: req.params.transaksiId } }
       );
-      return res.status(200).json({ message: `success editing transaksi` });
+      return res.status(200).json({ message: `payment confirmed` });
     } catch (error) {
       return res.status(400).json(error);
     }
