@@ -10,7 +10,7 @@ const authentication = async (req, res, next) => {
       req.user = userLogin;
       next();
     } else {
-      throw { messagee: `doesnt recognize user` };
+      throw { message: `doesnt recognize user` };
     }
   } catch (error) {
     console.log(error);

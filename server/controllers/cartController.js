@@ -37,6 +37,9 @@ class Controller {
         access_token = generateToken(dataValues);
       }
       const { id } = await Transaksi.create(transaksiData);
+      // const editQtyProduk = await Produk.bulkCreate([value], {
+      //   updateOnDuplicate: ["id"],
+      // });
       value.map((val) => {
         val.UserId = newUserId;
         val.transaksiId = id;
