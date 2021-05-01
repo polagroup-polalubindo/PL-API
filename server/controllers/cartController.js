@@ -24,6 +24,8 @@ class Controller {
       const { value } = req.body;
       const { transaksiData } = req.body;
       const { userData } = req.body;
+      console.log(req.body);
+      console.log(value)
       let access_token;
       let newUserId;
       if (userData) {
@@ -37,16 +39,19 @@ class Controller {
         access_token = generateToken(dataValues);
       }
       const { id } = await Transaksi.create(transaksiData);
-      // const editQtyProduk = await Produk.bulkCreate([value], {
-      //   updateOnDuplicate: ["id"],
-      // });
+      const promiseQuery = [];
       value.map((val) => {
         val.UserId = newUserId;
         val.transaksiId = id;
+        promiseQuery.push(
+          Produk.update(val.produk, { where: { id: val.produk.id } })
+        );
       });
+      const updateProduk = await Promise.all(promiseQuery);
       const carts = await Cart.bulkCreate(value);
-      return res.status(201).json({ carts, access_token });
+      return res.status(201).json({ access_token });
     } catch (error) {
+      console.log(error)
       return res.status(400).json(error);
     }
   };
@@ -107,6 +112,60 @@ class Controller {
       return res.status(200).json({ message: `payment confirmed` });
     } catch (error) {
       return res.status(400).json(error);
+    }
+  };
+
+  static testget = async (req, res) => {
+    try {
+      const prod1 = {
+        id: 1,
+        namaProduk: "Macbook Pro 13 M1",
+        deskripsi: "2021",
+        fotoProduk: null,
+        videoProduk: null,
+        stock: 2,
+        statusProduk: true,
+        sku: "MBPM1",
+        weight: 1000,
+        panjang: null,
+        lebar: null,
+        tinggi: null,
+        komisi: 10,
+        komisiProduk: true,
+        price: 18000000,
+        brandId: 1,
+        createdAt: "2021-04-01T03:34:39.000Z",
+        updatedAt: "2021-04-01T03:34:39.000Z",
+        BrandId: 1,
+      };
+      const prod2 = {
+        id: 3,
+        namaProduk: "TUF X506",
+        deskripsi: "2020",
+        fotoProduk: null,
+        videoProduk: null,
+        stock: 20,
+        statusProduk: true,
+        sku: "TUF506",
+        weight: 1000,
+        panjang: null,
+        lebar: null,
+        tinggi: null,
+        komisi: 10,
+        komisiProduk: true,
+        price: 14500000,
+        brandId: 2,
+        createdAt: "2021-04-01T03:35:39.000Z",
+        updatedAt: "2021-04-01T03:35:39.000Z",
+        BrandId: 2,
+      };
+      const test = await Promise.all([
+        Produk.update(prod1, { where: { id: 1 } }),
+        Produk.update(prod2, { where: { id: 3 } }),
+      ]);
+      res.status(200).json(test);
+    } catch (error) {
+      res.status(400).json(error);
     }
   };
 }
