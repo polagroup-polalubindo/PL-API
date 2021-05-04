@@ -7,6 +7,7 @@ const {
   Komisi,
 } = require("../models");
 const { generateToken } = require("../helpers/jwt");
+const { verifyToken } = require("../helpers/jwt");
 const { transporter, checkOutMail } = require("../helpers/mailer");
 
 class Controller {
@@ -21,14 +22,10 @@ class Controller {
 
   static checkOut = async (req, res) => {
     try {
-      const { value } = req.body;
-      const { transaksiData } = req.body;
-      const { userData } = req.body;
-      console.log(req.body);
-      console.log(value)
+      const { userData, transaksiData, value } = req.body;
       let access_token;
       let newUserId;
-      if (userData) {
+      if (!req.body.access_token) {
         const { dataValues } = await User.create({
           email: userData.email,
           phone: userData.phone,
@@ -37,6 +34,10 @@ class Controller {
         newUserId = dataValues.id;
         const komisiCustomer = await Komisi.create({ userId: dataValues.id });
         access_token = generateToken(dataValues);
+      } else {
+        const userLogin = verifyToken(req.body.access_token);
+        const data = await User.findOne({ where: { email: userLogin.email } });
+        newUserId = data.id;
       }
       const { id } = await Transaksi.create(transaksiData);
       const promiseQuery = [];
@@ -49,9 +50,12 @@ class Controller {
       });
       const updateProduk = await Promise.all(promiseQuery);
       const carts = await Cart.bulkCreate(value);
+      if (req.body.access_token) {
+        return res.status(201).json({ message: `checkout success` });
+      }
       return res.status(201).json({ access_token });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       return res.status(400).json(error);
     }
   };
