@@ -51,9 +51,11 @@ class Controller {
       const updateProduk = await Promise.all(promiseQuery);
       const carts = await Cart.bulkCreate(value);
       if (req.body.access_token) {
-        return res.status(201).json({ message: `checkout success` });
+        return res
+          .status(201)
+          .json({ message: `checkout success`, transaksiId: id });
       }
-      return res.status(201).json({ access_token });
+      return res.status(201).json({ access_token, transaksiId: id });
     } catch (error) {
       console.log(error);
       return res.status(400).json(error);
@@ -62,6 +64,7 @@ class Controller {
 
   static paymentConfirmation = async (req, res) => {
     try {
+      console.log(req.body);
       const {
         invoice,
         totalHarga,
@@ -77,24 +80,25 @@ class Controller {
         namaPenerima,
         alamatPengiriman,
       } = req.body;
-      const { referralCode } = req.params;
-      if (referralCode) {
-        const { id } = await User.findOne({
-          where: { referral: referralCode },
-        });
-        const addNewTransaksiKomisi = await TransaksiKomisi.create({
-          komisiId: id,
-          userId: req.user.id,
-          nominal: totalHarga,
-        });
-        const getUserKomisiData = await Komisi.findOne({ where: { id } });
-        getUserKomisiData.totalKomisi =
-          getUserKomisiData.totalKomisi + Number(totalHarga) * 0.1;
-        const addTotalKomisi = await Komisi.update(
-          getUserKomisiData.dataValues,
-          { where: { id } }
-        );
-      }
+      console.log("masuk endpoint");
+      // const { referralCode } = req.params;
+      // if (referralCode) {
+      //   const { id } = await User.findOne({
+      //     where: { referral: referralCode },
+      //   });
+      //   const addNewTransaksiKomisi = await TransaksiKomisi.create({
+      //     komisiId: id,
+      //     userId: req.user.id,
+      //     nominal: totalHarga,
+      //   });
+      //   const getUserKomisiData = await Komisi.findOne({ where: { id } });
+      //   getUserKomisiData.totalKomisi =
+      //     getUserKomisiData.totalKomisi + Number(totalHarga) * 0.1;
+      //   const addTotalKomisi = await Komisi.update(
+      //     getUserKomisiData.dataValues,
+      //     { where: { id } }
+      //   );
+      // }
       const edited = await Transaksi.update(
         {
           invoice,
@@ -113,6 +117,7 @@ class Controller {
         },
         { where: { id: req.params.transaksiId } }
       );
+      console.log(edited, "< edit");
       return res.status(200).json({ message: `payment confirmed` });
     } catch (error) {
       return res.status(400).json(error);
