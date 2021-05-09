@@ -6,11 +6,17 @@ class Controller {
   // Customer
 
   static register = async (req, res) => {
-    const { email, phone, nama } = req.body;
+    const { email, phone, nama, password } = req.body;
+    let newUser;
     try {
-      const newUser = await User.create({ email, phone, nama });
+      if (!password) {
+        newUser = await User.create({ email, phone, nama });
+      } else {
+        newUser = await User.create({ email, phone, nama, password });
+      }
       const komisiCustomer = await Komisi.create({ userId: newUser.id });
       return res.status(201).json({
+        message: "success register",
         nama: newUser.nama,
         phone: newUser.phone,
         email: newUser.email,

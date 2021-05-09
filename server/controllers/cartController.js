@@ -30,6 +30,7 @@ class Controller {
           email: userData.email,
           phone: userData.phone,
           nama: userData.nama,
+          password: userData.phone,
         });
         newUserId = dataValues.id;
         const komisiCustomer = await Komisi.create({ userId: dataValues.id });
@@ -64,7 +65,6 @@ class Controller {
 
   static paymentConfirmation = async (req, res) => {
     try {
-      console.log(req.body);
       const {
         invoice,
         totalHarga,
@@ -80,25 +80,27 @@ class Controller {
         namaPenerima,
         alamatPengiriman,
       } = req.body;
-      console.log("masuk endpoint");
+      const { ref } = req.query;
+      // console.log(ref,"<<<");
       // const { referralCode } = req.params;
-      // if (referralCode) {
-      //   const { id } = await User.findOne({
-      //     where: { referral: referralCode },
-      //   });
-      //   const addNewTransaksiKomisi = await TransaksiKomisi.create({
-      //     komisiId: id,
-      //     userId: req.user.id,
-      //     nominal: totalHarga,
-      //   });
-      //   const getUserKomisiData = await Komisi.findOne({ where: { id } });
-      //   getUserKomisiData.totalKomisi =
-      //     getUserKomisiData.totalKomisi + Number(totalHarga) * 0.1;
-      //   const addTotalKomisi = await Komisi.update(
-      //     getUserKomisiData.dataValues,
-      //     { where: { id } }
-      //   );
-      // }
+      if (ref) {
+        console.log(">>>>>>>> ada ref <<<<<<<<<<");
+        const { id } = await User.findOne({
+          where: { referral: ref },
+        });
+        const addNewTransaksiKomisi = await TransaksiKomisi.create({
+          komisiId: id,
+          userId: req.user.id,
+          nominal: totalHarga * 0.1,
+        });
+        const getUserKomisiData = await Komisi.findOne({ where: { id } });
+        getUserKomisiData.totalKomisi =
+          getUserKomisiData.totalKomisi + Number(totalHarga) * 0.1;
+        const addTotalKomisi = await Komisi.update(
+          getUserKomisiData.dataValues,
+          { where: { userId: id } }
+        );
+      }
       const edited = await Transaksi.update(
         {
           invoice,
@@ -126,53 +128,9 @@ class Controller {
 
   static testget = async (req, res) => {
     try {
-      const prod1 = {
-        id: 1,
-        namaProduk: "Macbook Pro 13 M1",
-        deskripsi: "2021",
-        fotoProduk: null,
-        videoProduk: null,
-        stock: 2,
-        statusProduk: true,
-        sku: "MBPM1",
-        weight: 1000,
-        panjang: null,
-        lebar: null,
-        tinggi: null,
-        komisi: 10,
-        komisiProduk: true,
-        price: 18000000,
-        brandId: 1,
-        createdAt: "2021-04-01T03:34:39.000Z",
-        updatedAt: "2021-04-01T03:34:39.000Z",
-        BrandId: 1,
-      };
-      const prod2 = {
-        id: 3,
-        namaProduk: "TUF X506",
-        deskripsi: "2020",
-        fotoProduk: null,
-        videoProduk: null,
-        stock: 20,
-        statusProduk: true,
-        sku: "TUF506",
-        weight: 1000,
-        panjang: null,
-        lebar: null,
-        tinggi: null,
-        komisi: 10,
-        komisiProduk: true,
-        price: 14500000,
-        brandId: 2,
-        createdAt: "2021-04-01T03:35:39.000Z",
-        updatedAt: "2021-04-01T03:35:39.000Z",
-        BrandId: 2,
-      };
-      const test = await Promise.all([
-        Produk.update(prod1, { where: { id: 1 } }),
-        Produk.update(prod2, { where: { id: 3 } }),
-      ]);
-      res.status(200).json(test);
+      console.log(req.query, "<<<");
+      const transaksi = await Transaksi.findAll();
+      return res.status(200).json({ message: "test" });
     } catch (error) {
       res.status(400).json(error);
     }

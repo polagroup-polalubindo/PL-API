@@ -66,7 +66,7 @@ module.exports = (sequelize, DataTypes) => {
     user.role = 'customer'
     user.status = true
     user.discountStatus = false
-    user.password = user.phone
+    // user.password = user.phone
     user.referral = shortid.generate()
 
     const salt = genSaltSync(10)
