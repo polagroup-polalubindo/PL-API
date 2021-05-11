@@ -13,7 +13,10 @@ const { transporter, checkOutMail } = require("../helpers/mailer");
 class Controller {
   static getCart = async (req, res) => {
     try {
-      const shoppingCart = await Cart.findAll({ include: [Produk, User] });
+      const shoppingCart = await Cart.findAll({
+        where: { userId: req.user.id },
+        include: [Produk, User],
+      });
       return res.status(200).json(shoppingCart);
     } catch (error) {
       return res.status(400).json(error);

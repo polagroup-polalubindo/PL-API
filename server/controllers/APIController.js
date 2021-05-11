@@ -9,8 +9,10 @@ class Controller {
   static getCost = async (req, res) => {
     const { destination, weight, courier } = req.body;
     try {
-      const { data: {rajaongkir} } = await axios.post("/cost", {
-        origin:"152",
+      const {
+        data: { rajaongkir },
+      } = await axios.post("/cost", {
+        origin: "152",
         destination,
         weight,
         courier,
@@ -21,31 +23,33 @@ class Controller {
     }
   };
 
-  static getTotalCost = async (req,res) =>{
-      try {
-          console.log('masuk')
-        const { weight, courier,destination } = req.params;
-        const { data } = await axios.get(`/city`);
-        const filtered = data.rajaongkir.results.filter((el)=>el.city_name.toLowerCase() === destination.toLowerCase())
-        const { data: {rajaongkir} } = await axios.post("/cost", {
-            origin:"152",
-            destination:filtered[0].city_id,
-            weight,
-            courier,
-          });
-          return res.status(200).json(rajaongkir.results[0].costs)
-      } catch (error) {
-          console.log(error)
-          return res.status(400).json(error)
-      }
-  }
+  static getTotalCost = async (req, res) => {
+    try {
+      console.log("masuk");
+      const { weight, courier, destination } = req.params;
+      const { data } = await axios.get(`/city`);
+      const filtered = data.rajaongkir.results.filter(
+        (el) => el.city_name.toLowerCase() === destination.toLowerCase()
+      );
+      const {
+        data: { rajaongkir },
+      } = await axios.post("/cost", {
+        origin: "152",
+        destination: filtered[0].city_id,
+        weight,
+        courier,
+      });
+      return res.status(200).json(rajaongkir.results[0].costs);
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json(error);
+    }
+  };
 
   static getCity = async (req, res) => {
     try {
-    //   const {province} = req.body
       const { data } = await axios.get(`/city`);
-      const filtered = data.rajaongkir.results.filter((el)=>el.city_name.toLowerCase() === req.params.destination.toLowerCase())
-      return res.status(200).json(filtered);
+      return res.status(200).json(data.rajaongkir.results);
     } catch (error) {
       return res.status(400).json(error);
     }

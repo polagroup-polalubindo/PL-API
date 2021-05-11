@@ -10,7 +10,7 @@ class Controller {
     let newUser;
     try {
       if (!password) {
-        newUser = await User.create({ email, phone, nama });
+        newUser = await User.create({ email, phone, nama, password: phone });
       } else {
         newUser = await User.create({ email, phone, nama, password });
       }
@@ -22,14 +22,24 @@ class Controller {
         email: newUser.email,
       });
     } catch (error) {
-      return res.status(400).json(error);
+      error.name === "SequelizeValidationError"
+        ? res.status(400).json({ errMessage: error.errors[0].message })
+        : res.status(400).json(error);
     }
   };
 
   static login = async (req, res) => {
-    const { email, password } = req.body;
+    const { email, phone, password } = req.body;
     try {
-      const data = await User.findOne({ where: { email } });
+      let data = null;
+      if (email) {
+        console.log("mail");
+        data = await User.findOne({ where: { email } });
+      }
+      if (phone) {
+        console.log("phone");
+        data = await User.findOne({ where: { phone } });
+      }
       if (data) {
         const validasiPassword = compareHash(password, data.password);
         if (validasiPassword) {
