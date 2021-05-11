@@ -62,7 +62,9 @@ class Controller {
       return res.status(201).json({ access_token, transaksiId: id });
     } catch (error) {
       console.log(error);
-      return res.status(400).json(error);
+      error.name === "SequelizeValidationError"
+        ? res.status(400).json({ errMessage: error.errors[0].message })
+        : res.status(400).json(error);
     }
   };
 
@@ -125,7 +127,7 @@ class Controller {
       console.log(edited, "< edit");
       return res.status(200).json({ message: `payment confirmed` });
     } catch (error) {
-      return res.status(400).json(error);
+      return res.status(400).json({ errMessage: error.errors });
     }
   };
 
