@@ -7,7 +7,7 @@ const authentication = require('../../middleware/authentication')
 
 user.post('/register',controller.register)
 user.post('/login',controller.login)
-
+user.get("/refcode/:access_token",controller.getUserRefcode)
 
 user.get('/customer/:customerId',authentication,controller.getCustomerTransaction)
 

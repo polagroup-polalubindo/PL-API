@@ -1,6 +1,6 @@
 const { User, Komisi, TransaksiKomisi } = require("../models");
 const { compareHash } = require("../helpers/bcrypt");
-const { generateToken } = require("../helpers/jwt");
+const { generateToken, verifyToken } = require("../helpers/jwt");
 
 class Controller {
   // Customer
@@ -54,6 +54,11 @@ class Controller {
     } catch (error) {
       return res.status(400).json(error);
     }
+  };
+
+  static getUserRefcode = async (req, res) => {
+    const data = await verifyToken(req.params.access_token);
+    return res.status(200).json(data.referral)
   };
 
   static getCustomerTransaction = async (req, res) => {

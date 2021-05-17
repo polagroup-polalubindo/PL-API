@@ -30,10 +30,10 @@ class Controller {
       let newUserId;
       if (!req.body.access_token) {
         const { dataValues } = await User.create({
-          email: userData.email,
-          phone: userData.phone,
-          nama: userData.nama,
-          password: userData.phone,
+          email: userData?.email,
+          phone: userData?.phone,
+          nama: userData?.nama,
+          password: userData?.phone,
         });
         newUserId = dataValues.id;
         const komisiCustomer = await Komisi.create({ userId: dataValues.id });
@@ -42,6 +42,7 @@ class Controller {
         const userLogin = verifyToken(req.body.access_token);
         const data = await User.findOne({ where: { email: userLogin.email } });
         newUserId = data.id;
+        access_token = req.body.access_token;
       }
       const { id } = await Transaksi.create(transaksiData);
       const promiseQuery = [];
@@ -54,11 +55,6 @@ class Controller {
       });
       const updateProduk = await Promise.all(promiseQuery);
       const carts = await Cart.bulkCreate(value);
-      if (req.body.access_token) {
-        return res
-          .status(201)
-          .json({ message: `checkout success`, transaksiId: id });
-      }
       return res.status(201).json({ access_token, transaksiId: id });
     } catch (error) {
       console.log(error);
