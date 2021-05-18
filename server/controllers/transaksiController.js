@@ -1,13 +1,36 @@
 const { Transaksi, Cart, Produk } = require("../models");
 
 class Controller {
-  static getAllTransaksi = async (req, res) => {
+  static getTransaksiBeforePayment = async (req, res) => {
     try {
       const allTransaksi = await Transaksi.findAll({
-        include: { model: Cart, include: Produk },
+        where: { statusPembayaran: null },
+        include: {
+          where: { userId: req.user.id },
+          model: Cart,
+          include: Produk,
+        },
       });
       return res.status(200).json(allTransaksi);
     } catch (error) {
+      console.log(error);
+      return res.status(400).json(error);
+    }
+  };
+
+  static getTransaksiAfterPayment = async (req, res) => {
+    try {
+      const allTransaksi = await Transaksi.findAll({
+        where: { statusPembayaran: "success" },
+        include: {
+          where: { userId: req.user.id },
+          model: Cart,
+          include: Produk,
+        },
+      });
+      return res.status(200).json(allTransaksi);
+    } catch (error) {
+      console.log(error);
       return res.status(400).json(error);
     }
   };
