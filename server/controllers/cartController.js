@@ -15,7 +15,7 @@ class Controller {
     try {
       const shoppingCart = await Cart.findAll({
         where: { userId: req.user.id },
-        include: [Produk, User],
+        include: [Produk],
       });
       return res.status(200).json(shoppingCart);
     } catch (error) {
@@ -57,7 +57,6 @@ class Controller {
       const carts = await Cart.bulkCreate(value);
       return res.status(201).json({ access_token, transaksiId: id });
     } catch (error) {
-      console.log(error);
       error.name === "SequelizeValidationError"
         ? res.status(400).json({ errMessage: error.errors[0].message })
         : res.status(400).json(error);
@@ -82,10 +81,7 @@ class Controller {
         alamatPengiriman,
       } = req.body;
       const { ref } = req.query;
-      // console.log(ref,"<<<");
-      // const { referralCode } = req.params;
       if (ref) {
-        console.log(">>>>>>>> ada ref <<<<<<<<<<");
         const { id } = await User.findOne({
           where: { referral: ref },
         });
@@ -120,22 +116,12 @@ class Controller {
         },
         { where: { id: req.params.transaksiId } }
       );
-      console.log(edited, "< edit");
       return res.status(200).json({ message: `payment confirmed` });
     } catch (error) {
       return res.status(400).json({ errMessage: error.errors });
     }
   };
 
-  static testget = async (req, res) => {
-    try {
-      console.log(req.query, "<<<");
-      const transaksi = await Transaksi.findAll();
-      return res.status(200).json({ message: "test" });
-    } catch (error) {
-      res.status(400).json(error);
-    }
-  };
 }
 
 module.exports = Controller;

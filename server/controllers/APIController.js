@@ -25,7 +25,6 @@ class Controller {
 
   static getTotalCost = async (req, res) => {
     try {
-      console.log("masuk");
       const { weight, courier, destination } = req.params;
       const { data } = await axios.get(`/city`);
       const filtered = data.rajaongkir.results.filter(
@@ -41,7 +40,6 @@ class Controller {
       });
       return res.status(200).json(rajaongkir.results[0].costs);
     } catch (error) {
-      console.log(error);
       return res.status(400).json(error);
     }
   };
