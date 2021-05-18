@@ -10,6 +10,7 @@ user.post('/login',controller.login)
 user.get("/refcode/:access_token",controller.getUserRefcode)
 
 user.get('/customer/:customerId',authentication,controller.getCustomerTransaction)
+user.get('/customerData',authentication,controller.getUserData)
 
 
 // CMS

@@ -93,6 +93,11 @@ class Controller {
         const getUserKomisiData = await Komisi.findOne({ where: { id } });
         getUserKomisiData.totalKomisi =
           getUserKomisiData.totalKomisi + Number(totalHarga) * 0.1;
+          if (getUserKomisiData.sisaKomisi === 0){
+            getUserKomisiData.sisaKomisi = getUserKomisiData.totalKomisi
+          }else{
+            getUserKomisiData.sisaKomisi += Number(totalHarga) * 0.1
+          }
         const addTotalKomisi = await Komisi.update(
           getUserKomisiData.dataValues,
           { where: { userId: id } }
