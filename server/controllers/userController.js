@@ -1,4 +1,4 @@
-const { User, Komisi, TransaksiKomisi } = require("../models");
+const { User, Komisi, TransaksiKomisi, Alamat } = require("../models");
 const { compareHash } = require("../helpers/bcrypt");
 const { generateToken, verifyToken } = require("../helpers/jwt");
 
@@ -120,15 +120,8 @@ class Controller {
 
   static editData = async (req, res) => {
     try {
-      const {
-        email,
-        password,
-        phone,
-        nama,
-        status,
-        discountStatus,
-        discount,
-      } = req.body;
+      const { email, password, phone, nama, status, discountStatus, discount } =
+        req.body;
       const newData = await User.update(
         { email, password, phone, nama, status, discountStatus, discount },
         { where: { id: req.params.customerId } }

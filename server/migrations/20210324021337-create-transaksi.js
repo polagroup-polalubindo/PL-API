@@ -1,63 +1,69 @@
-'use strict';
+"use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Transaksis', {
+    await queryInterface.createTable("Transaksis", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       invoice: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       totalHarga: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       ongkosKirim: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       statusPesanan: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       statusPembayaran: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       statusPengiriman: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       metodePembayaran: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       namaRekening: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       jumlahBayar: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       bankAsal: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       bankTujuan: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       namaPenerima: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
-      alamatPengiriman:{
+      alamatPengiriman: {
+        type: Sequelize.STRING,
+      },
+      telfonPenerima: {
+        type: Sequelize.STRING,
+      },
+      referralCode: {
         type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Transaksis');
-  }
+    await queryInterface.dropTable("Transaksis");
+  },
 };

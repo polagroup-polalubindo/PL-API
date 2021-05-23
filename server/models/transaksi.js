@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Transaksi extends Model {
     /**
@@ -11,26 +9,31 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Transaksi.hasMany(models.Cart)
+      Transaksi.hasMany(models.Cart);
     }
-  };
-  Transaksi.init({
-    invoice: DataTypes.STRING,
-    totalHarga: DataTypes.INTEGER,
-    ongkosKirim: DataTypes.INTEGER,
-    statusPesanan: DataTypes.STRING,
-    statusPembayaran: DataTypes.STRING,
-    statusPengiriman: DataTypes.STRING,
-    metodePembayaran: DataTypes.STRING,
-    namaRekening: DataTypes.STRING,
-    jumlahBayar: DataTypes.INTEGER,
-    bankAsal: DataTypes.STRING,
-    bankTujuan: DataTypes.STRING,
-    namaPenerima: DataTypes.STRING,
-    alamatPengiriman: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'Transaksi',
-  });
+  }
+  Transaksi.init(
+    {
+      invoice: DataTypes.STRING,
+      totalHarga: DataTypes.INTEGER,
+      ongkosKirim: DataTypes.INTEGER,
+      statusPesanan: DataTypes.STRING,
+      statusPembayaran: DataTypes.STRING,
+      statusPengiriman: DataTypes.STRING,
+      metodePembayaran: DataTypes.STRING,
+      namaRekening: DataTypes.STRING,
+      jumlahBayar: DataTypes.INTEGER,
+      bankAsal: DataTypes.STRING,
+      bankTujuan: DataTypes.STRING,
+      namaPenerima: DataTypes.STRING,
+      alamatPengiriman: DataTypes.STRING,
+      telfonPenerima: DataTypes.STRING,
+      referralCode: DataTypes.STRING,
+    },
+    {
+      sequelize,
+      modelName: "Transaksi",
+    }
+  );
   return Transaksi;
 };

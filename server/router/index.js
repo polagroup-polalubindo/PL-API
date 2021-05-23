@@ -7,6 +7,7 @@ const transaksi = require("./transaksi-router");
 const transaksiKomisi = require("./transaksiKomisi-router");
 const komisi = require("./komisi-router");
 const rajaOngkir = require("./rajaOngkir-router");
+const alamat = require("./alamat-router");
 
 router.use(user);
 router.use(brand);
@@ -16,5 +17,6 @@ router.use(transaksi);
 router.use(transaksiKomisi);
 router.use(komisi);
 router.use(rajaOngkir);
+router.use(alamat);
 
 module.exports = router;

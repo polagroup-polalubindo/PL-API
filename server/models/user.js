@@ -15,7 +15,8 @@ module.exports = (sequelize, DataTypes) => {
       User.belongsToMany(models.Produk, { through: models.Cart });
       User.hasMany(models.Cart);
       User.hasMany(models.Komisi);
-      User.hasMany(models.TransaksiKomisi)
+      User.hasMany(models.TransaksiKomisi);
+      User.hasMany(models.Alamat);
     }
   }
   User.init(
@@ -62,13 +63,19 @@ module.exports = (sequelize, DataTypes) => {
           notEmpty: true,
         },
       },
+      alamat: DataTypes.STRING,
       role: DataTypes.STRING,
       referral: DataTypes.STRING,
+      referralStatus: DataTypes.BOOLEAN,
       status: DataTypes.BOOLEAN,
       discountStatus: DataTypes.BOOLEAN,
       discount: DataTypes.INTEGER,
       bank: DataTypes.STRING,
       noRekening: DataTypes.STRING,
+      photo: DataTypes.STRING,
+      noKtp: DataTypes.STRING,
+      noNPWP: DataTypes.STRING,
+      totalPembelian: DataTypes.INTEGER,
     },
     {
       sequelize,

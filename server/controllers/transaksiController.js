@@ -75,6 +75,15 @@ class Controller {
       return res.status(400).json(error);
     }
   };
+
+  // CMS
+
+  static getAllTransaksi = async (req, res) => {
+    const data = await Transaksi.findAll({
+      include: { model: Cart, include: Produk },
+    });
+    return res.status(200).json(data);
+  };
 }
 
 module.exports = Controller;

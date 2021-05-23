@@ -1,69 +1,81 @@
-'use strict';
+"use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Produks', {
+    await queryInterface.createTable("Produks", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       namaProduk: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       deskripsi: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+      },
+      minPesanan: {
+        type: Sequelize.INTEGER,
       },
       fotoProduk: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       videoProduk: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       stock: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       statusProduk: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
       },
       sku: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+      },
+      discount: {
+        type: Sequelize.INTEGER,
       },
       weight: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       panjang: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       lebar: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       tinggi: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       komisi: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
-      komisiProduk: {
-        type: Sequelize.BOOLEAN
+      komisiStatus: {
+        type: Sequelize.BOOLEAN,
       },
-      price: {
-        type: Sequelize.INTEGER
+      hargaSatuan: {
+        type: Sequelize.INTEGER,
+      },
+      hargaGrosir: {
+        type: Sequelize.INTEGER,
+      },
+      levelKomisi: {
+        type: Sequelize.INTEGER,
       },
       brandId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Produks');
-  }
+    await queryInterface.dropTable("Produks");
+  },
 };
