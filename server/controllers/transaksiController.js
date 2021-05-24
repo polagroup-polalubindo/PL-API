@@ -84,6 +84,114 @@ class Controller {
     });
     return res.status(200).json(data);
   };
+
+  static konfirmasiTransaksi = async (req, res) => {
+    const {
+      alamatPengiriman,
+      bankAsal,
+      bankTujuan,
+      id,
+      invoice,
+      jumlahBayar,
+      metodePembayaran,
+      namaPenerima,
+      namaRekening,
+      ongkosKirim,
+      referralCode,
+      statusPembayaran,
+      statusPengiriman,
+      statusPesanan,
+      telfonPenerima,
+      totalHarga,
+    } = req.body;
+    const konfirmasi = await Transaksi.update(
+      {
+        alamatPengiriman,
+        bankAsal,
+        bankTujuan,
+        id,
+        invoice,
+        jumlahBayar,
+        metodePembayaran,
+        namaPenerima,
+        namaRekening,
+        ongkosKirim,
+        referralCode,
+        statusPembayaran,
+        statusPengiriman,
+        statusPesanan,
+        telfonPenerima,
+        totalHarga,
+      },
+      { where: { id } }
+    );
+  };
+
+  static tolakPesanan = async (req, res) => {
+    const {
+      Carts,
+      alamatPengiriman,
+      bankAsal,
+      bankTujuan,
+      id,
+      invoice,
+      jumlahBayar,
+      metodePembayaran,
+      namaPenerima,
+      namaRekening,
+      ongkosKirim,
+      referralCode,
+      statusPembayaran,
+      statusPengiriman,
+      statusPesanan,
+      telfonPenerima,
+      totalHarga,
+    } = req.body;
+    const data = await Transaksi.update(
+      {
+        alamatPengiriman,
+        bankAsal,
+        bankTujuan,
+        id,
+        invoice,
+        jumlahBayar,
+        metodePembayaran,
+        namaPenerima,
+        namaRekening,
+        ongkosKirim,
+        referralCode,
+        statusPembayaran,
+        statusPengiriman,
+        statusPesanan,
+        telfonPenerima,
+        totalHarga,
+      },
+      { where: { id } }
+    );
+    const promiseGetProdukData = [];
+    const produk = [];
+    Carts.map((cart) => {
+      produk.push({ qty: cart.qty, produkId: cart.produkId });
+      promiseGetProdukData.push(
+        Produk.findOne({ where: { id: cart.produkId } })
+      );
+    });
+    const produkData = await Promise.all(promiseGetProdukData);
+    const promiseEditProduk = [];
+    produkData.map((item) => {
+      produk.map((el) => {
+        if (item.id === el.produkId) {
+          item.stock += el.qty;
+          promiseEditProduk.push(
+            Produk.update(item.dataValues, { where: { id: item.id } })
+          );
+        }
+      });
+    });
+    const editedProduk = await Promise.all(promiseEditProduk);
+
+    return res.status(200).json(editedProduk);
+  };
 }
 
 module.exports = Controller;

@@ -19,6 +19,8 @@ transaksi.put(
   controller.editTransaksi
 );
 
+// CMS
+
 transaksi.get(
   "/transaksi",
   authentication,
@@ -26,4 +28,17 @@ transaksi.get(
   controller.getAllTransaksi
 );
 
+transaksi.post(
+  "/konfirmasi-transaksi",
+  authentication,
+  authorization,
+  controller.konfirmasiTransaksi
+);
+
+transaksi.post(
+  "/tolak-pesanan",
+  authentication,
+  authorization,
+  controller.tolakPesanan
+);
 module.exports = transaksi;
