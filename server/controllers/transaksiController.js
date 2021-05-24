@@ -1,4 +1,4 @@
-const { Transaksi, Cart, Produk } = require("../models");
+const { Transaksi, Cart, Produk, User } = require("../models");
 
 class Controller {
   static getTransaksiBeforePayment = async (req, res) => {
@@ -21,7 +21,7 @@ class Controller {
   static getTransaksiAfterPayment = async (req, res) => {
     try {
       const allTransaksi = await Transaksi.findAll({
-        where: { statusPembayaran: "success" },
+        where: { statusPembayaran: "menunggu konfirmasi" },
         include: {
           where: { userId: req.user.id },
           model: Cart,
@@ -87,6 +87,7 @@ class Controller {
 
   static konfirmasiTransaksi = async (req, res) => {
     const {
+      Carts,
       alamatPengiriman,
       bankAsal,
       bankTujuan,
@@ -124,6 +125,16 @@ class Controller {
         totalHarga,
       },
       { where: { id } }
+    );
+
+    const customerData = await User.findOne({ where: { id: Carts[0].userId } });
+    customerData.totalPembelian += totalHarga - ongkosKirim;
+    console.log(customerData.dataValues);
+    const update = await User.update(
+      { totalPembelian: customerData.totalPembelian },
+      {
+        where: { id: customerData.id },
+      }
     );
   };
 

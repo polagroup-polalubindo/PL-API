@@ -79,6 +79,8 @@ class Controller {
         bankTujuan,
         namaPenerima,
         alamatPengiriman,
+        telfonPenerima,
+        referral,
       } = req.body;
       const { ref } = req.query;
       if (ref) {
@@ -93,11 +95,11 @@ class Controller {
         const getUserKomisiData = await Komisi.findOne({ where: { id } });
         getUserKomisiData.totalKomisi =
           getUserKomisiData.totalKomisi + Number(totalHarga) * 0.1;
-          if (getUserKomisiData.sisaKomisi === 0){
-            getUserKomisiData.sisaKomisi = getUserKomisiData.totalKomisi
-          }else{
-            getUserKomisiData.sisaKomisi += Number(totalHarga) * 0.1
-          }
+        if (getUserKomisiData.sisaKomisi === 0) {
+          getUserKomisiData.sisaKomisi = getUserKomisiData.totalKomisi;
+        } else {
+          getUserKomisiData.sisaKomisi += Number(totalHarga) * 0.1;
+        }
         const addTotalKomisi = await Komisi.update(
           getUserKomisiData.dataValues,
           { where: { userId: id } }
@@ -118,6 +120,8 @@ class Controller {
           bankTujuan,
           namaPenerima,
           alamatPengiriman,
+          telfonPenerima,
+          referral,
         },
         { where: { id: req.params.transaksiId } }
       );
@@ -126,7 +130,6 @@ class Controller {
       return res.status(400).json({ errMessage: error.errors });
     }
   };
-
 }
 
 module.exports = Controller;
