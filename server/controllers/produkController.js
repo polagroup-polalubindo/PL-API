@@ -124,6 +124,13 @@ class Controller {
       return res.status(400).json(error);
     }
   };
+
+  static testUpload = async (req, res) => {
+    // const { fotoProduk, namaProduk } = req.body;
+    console.log(req.body);
+    console.log(req.file, "<<<");
+    // return res.status(200).json({ message: "success upload" });
+  };
 }
 
 module.exports = Controller;

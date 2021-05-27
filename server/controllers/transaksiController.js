@@ -88,48 +88,20 @@ class Controller {
   static konfirmasiTransaksi = async (req, res) => {
     const {
       Carts,
-      alamatPengiriman,
-      bankAsal,
-      bankTujuan,
       id,
-      invoice,
-      jumlahBayar,
-      metodePembayaran,
-      namaPenerima,
-      namaRekening,
-      ongkosKirim,
-      referralCode,
       statusPembayaran,
       statusPengiriman,
       statusPesanan,
-      telfonPenerima,
       totalHarga,
+      ongkosKirim,
     } = req.body;
     const konfirmasi = await Transaksi.update(
-      {
-        alamatPengiriman,
-        bankAsal,
-        bankTujuan,
-        id,
-        invoice,
-        jumlahBayar,
-        metodePembayaran,
-        namaPenerima,
-        namaRekening,
-        ongkosKirim,
-        referralCode,
-        statusPembayaran,
-        statusPengiriman,
-        statusPesanan,
-        telfonPenerima,
-        totalHarga,
-      },
+      { id, statusPembayaran, statusPengiriman, statusPesanan },
       { where: { id } }
     );
 
     const customerData = await User.findOne({ where: { id: Carts[0].userId } });
     customerData.totalPembelian += totalHarga - ongkosKirim;
-    console.log(customerData.dataValues);
     const update = await User.update(
       { totalPembelian: customerData.totalPembelian },
       {
