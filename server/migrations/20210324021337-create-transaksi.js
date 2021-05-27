@@ -17,6 +17,9 @@ module.exports = {
       ongkosKirim: {
         type: Sequelize.INTEGER,
       },
+      kurir: {
+        type: Sequelize.STRING,
+      },
       statusPesanan: {
         type: Sequelize.STRING,
       },
@@ -24,6 +27,9 @@ module.exports = {
         type: Sequelize.STRING,
       },
       statusPengiriman: {
+        type: Sequelize.STRING,
+      },
+      noResi: {
         type: Sequelize.STRING,
       },
       metodePembayaran: {
@@ -51,7 +57,7 @@ module.exports = {
         type: Sequelize.STRING,
       },
       referralCode: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,

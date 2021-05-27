@@ -108,6 +108,7 @@ class Controller {
         where: { id: customerData.id },
       }
     );
+    return res.status(200).json({ message: "success" });
   };
 
   static tolakPesanan = async (req, res) => {
@@ -173,7 +174,16 @@ class Controller {
     });
     const editedProduk = await Promise.all(promiseEditProduk);
 
-    return res.status(200).json(editedProduk);
+    return res.status(200).json({ message: "success" });
+  };
+
+  static updateResi = async (req, res) => {
+    const { noResi, statusPengiriman, id } = req.body;
+    const data = await Transaksi.update(
+      { noResi, statusPengiriman },
+      { where: { id } }
+    );
+    return res.status(200).json({ message: "success" });
   };
 }
 

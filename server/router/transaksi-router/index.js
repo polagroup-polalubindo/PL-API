@@ -41,4 +41,11 @@ transaksi.post(
   authorization,
   controller.tolakPesanan
 );
+
+transaksi.post(
+  `/input-resi`,
+  authentication,
+  authorization,
+  controller.updateResi
+);
 module.exports = transaksi;
