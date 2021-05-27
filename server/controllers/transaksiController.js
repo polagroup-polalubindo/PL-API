@@ -80,7 +80,7 @@ class Controller {
 
   static getAllTransaksi = async (req, res) => {
     const data = await Transaksi.findAll({
-      include: { model: Cart, include: Produk },
+      include: { model: Cart, include: [Produk, User] },
     });
     return res.status(200).json(data);
   };
