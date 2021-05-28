@@ -13,38 +13,13 @@ class Controller {
   static addProduk = async (req, res) => {
     try {
       const {
-        namaProduk,
-        deskripsi,
-        fotoProduk,
-        videoProduk,
-        stock,
-        sku,
-        weight,
-        panjang,
-        lebar,
-        tinggi,
-        price,
-        brandId,
-        statusProduk,
-        komisiProduk,
-      } = req.body;
-      const newProduk = await Produk.create({
-        namaProduk,
-        deskripsi,
-        fotoProduk,
-        videoProduk,
-        stock,
-        sku,
-        weight,
-        panjang,
-        lebar,
-        tinggi,
-        price,
-        brandId,
-        statusProduk,
-        komisiProduk,
-      });
-      return res.status(201).json(newProduk);
+        file,
+        body: { data },
+      } = req;
+      const newData = JSON.parse(data);
+      newData.fotoProduk = file.path;
+      const addProduk = await Produk.create(newData);
+      return res.status(201).json(addProduk);
     } catch (error) {
       return res.status(400).json(error);
     }
@@ -123,13 +98,6 @@ class Controller {
     } catch (error) {
       return res.status(400).json(error);
     }
-  };
-
-  static testUpload = async (req, res) => {
-    // const { fotoProduk, namaProduk } = req.body;
-    console.log(req.body);
-    console.log(req.file, "<<<");
-    // return res.status(200).json({ message: "success upload" });
   };
 }
 

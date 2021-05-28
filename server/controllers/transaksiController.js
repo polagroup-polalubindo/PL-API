@@ -1,4 +1,5 @@
 const { Transaksi, Cart, Produk, User } = require("../models");
+const cronJob = require("cron").CronJob;
 
 class Controller {
   static getTransaksiBeforePayment = async (req, res) => {
@@ -186,5 +187,9 @@ class Controller {
     return res.status(200).json({ message: "success" });
   };
 }
+// let tanggal = String(new Date());
+// tanggal = tanggal.split("T");
+// console.log(tanggal);
+// const update = new cronJob({});
 
 module.exports = Controller;

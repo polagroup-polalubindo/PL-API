@@ -2,21 +2,19 @@ const produk = require("express").Router();
 const controller = require("../../controllers/produkController");
 const authorization = require("../../middleware/authorization");
 const authentication = require("../../middleware/authentication");
-const multer = require("multer");
-const storage = multer.diskStorage({
-  destination: "../../assets",
-  filename: function (req, file, cb) {
-    cb(null, "IMAGE-" + Date.now() + path.extname(file.originalname));
-  },
-});
-const upload = multer({
-  storage: storage,
-});
+const upload = require("../../middleware/multer");
+
 produk.get("/produk", controller.getAll);
 
 // CMS
 
-produk.post("/produk", authentication, authorization, controller.addProduk);
+produk.post(
+  "/produk",
+  upload.single("file"),
+  authentication,
+  authorization,
+  controller.addProduk
+);
 produk.get(
   "/produk/:produkId",
   authentication,
@@ -41,7 +39,5 @@ produk.delete(
   authorization,
   controller.deleteProduk
 );
-
-produk.post("/upload", upload.single("file"), controller.testUpload);
 
 module.exports = produk;
