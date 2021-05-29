@@ -4,6 +4,7 @@ const authorization = require("../../middleware/authorization");
 const authentication = require("../../middleware/authentication");
 const upload = require("../../middleware/multer");
 
+
 produk.get("/produk", controller.getAll);
 
 // CMS
