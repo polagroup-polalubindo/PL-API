@@ -1,5 +1,5 @@
 const { response } = require("express");
-const { TransaksiKomisi, Komisi, User } = require("../models");
+const { TransaksiKomisi, Komisi, User, Transaksi, Cart } = require("../models");
 
 class Controller {
   static withdrawKomisi = async (req, res) => {
@@ -30,6 +30,36 @@ class Controller {
       include: User,
     });
     let newData = [...data, ...withdrawedKomisi];
+    return res.status(200).json(newData);
+  };
+
+  static getAllTransaksi = async (req, res) => {
+    const data = await TransaksiKomisi.findAll({
+      include: [Transaksi, User],
+    });
+    const komisiData = await Komisi.findAll();
+
+    const newData = [];
+
+    for (let i = 0; i < data.length; i++) {
+      for (let j = 0; j < komisiData.length; j++) {
+        if (data[i].komisiId === komisiData[j].id) {
+          const filter = newData.filter((el) => el.id === komisiData[j].id);
+          if (filter.length === 0) {
+            const temp = komisiData[j].dataValues;
+            if (!temp.transaksi) {
+              temp.transaksi = [];
+            }
+            temp.transaksi.push(data[i]);
+            newData.push(temp);
+          } else {
+            newData.map((el) => {
+              if (el.id === komisiData[j].id) [el.transaksi.push(data[i])];
+            });
+          }
+        }
+      }
+    }
     return res.status(200).json(newData);
   };
 }

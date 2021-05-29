@@ -92,6 +92,7 @@ class Controller {
           komisiId: id,
           userId: req.user.id,
           nominal: totalHarga * 0.1,
+          transaksiId: req.params.transaksiId,
         });
         const getUserKomisiData = await Komisi.findOne({
           where: { userId: id },
