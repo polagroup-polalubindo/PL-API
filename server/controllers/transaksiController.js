@@ -1,11 +1,12 @@
 const { Transaksi, Cart, Produk, User } = require("../models");
+const { Op } = require("sequelize");
 const cronJob = require("cron").CronJob;
 
 class Controller {
   static getTransaksiBeforePayment = async (req, res) => {
     try {
       const allTransaksi = await Transaksi.findAll({
-        where: { statusPembayaran: null },
+        where: { statusPembayaran: "menunggu pembayaran" },
         include: {
           where: { userId: req.user.id },
           model: Cart,
@@ -22,7 +23,19 @@ class Controller {
   static getTransaksiAfterPayment = async (req, res) => {
     try {
       const allTransaksi = await Transaksi.findAll({
-        where: { statusPembayaran: "menunggu konfirmasi" },
+        where: {
+          statusPengiriman: {
+            [Op.or]: [
+              "menunggu konfirmasi",
+              "siap di kirim",
+              "dalam pengiriman",
+              "selesai",
+            ],
+          },
+          statusPesanan: {
+            [Op.or]: ["menunggu konfirmasi", "pesanan di konfirmasi"],
+          },
+        },
         include: {
           where: { userId: req.user.id },
           model: Cart,

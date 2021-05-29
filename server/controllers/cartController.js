@@ -81,6 +81,7 @@ class Controller {
         alamatPengiriman,
         telfonPenerima,
         referral,
+        kurir,
       } = req.body;
       const { ref } = req.query;
       if (ref) {
@@ -92,7 +93,9 @@ class Controller {
           userId: req.user.id,
           nominal: totalHarga * 0.1,
         });
-        const getUserKomisiData = await Komisi.findOne({ where: { id } });
+        const getUserKomisiData = await Komisi.findOne({
+          where: { userId: id },
+        });
         getUserKomisiData.totalKomisi =
           getUserKomisiData.totalKomisi + Number(totalHarga) * 0.1;
         if (getUserKomisiData.sisaKomisi === 0) {
@@ -100,6 +103,7 @@ class Controller {
         } else {
           getUserKomisiData.sisaKomisi += Number(totalHarga) * 0.1;
         }
+        console.log(getUserKomisiData, "<<<");
         const addTotalKomisi = await Komisi.update(
           getUserKomisiData.dataValues,
           { where: { userId: id } }
@@ -122,6 +126,7 @@ class Controller {
           alamatPengiriman,
           telfonPenerima,
           referral,
+          kurir,
         },
         { where: { id: req.params.transaksiId } }
       );
