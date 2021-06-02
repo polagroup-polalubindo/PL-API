@@ -57,6 +57,7 @@ class Controller {
       const carts = await Cart.bulkCreate(value);
       return res.status(201).json({ access_token, transaksiId: id });
     } catch (error) {
+      console.log(error);
       error.name === "SequelizeValidationError"
         ? res.status(400).json({ errMessage: error.errors[0].message })
         : res.status(400).json(error);
@@ -82,6 +83,7 @@ class Controller {
         telfonPenerima,
         referral,
         kurir,
+        expiredAt,
       } = req.body;
       const { ref } = req.query;
       if (ref) {
@@ -128,6 +130,7 @@ class Controller {
           telfonPenerima,
           referral,
           kurir,
+          expiredAt,
         },
         { where: { id: req.params.transaksiId } }
       );

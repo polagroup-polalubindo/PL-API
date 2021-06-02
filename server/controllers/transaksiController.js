@@ -192,12 +192,20 @@ class Controller {
   };
 
   static updateResi = async (req, res) => {
-    const { noResi, statusPengiriman, id } = req.body;
+    const { noResi, statusPengiriman, id, expiredAt } = req.body;
     const data = await Transaksi.update(
-      { noResi, statusPengiriman },
+      { noResi, statusPengiriman, expiredAt },
       { where: { id } }
     );
     return res.status(200).json({ message: "success" });
+  };
+
+  static pesananSelesai = async (req, res) => {
+    const { statusPengiriman, statusPesanan, id } = req.body;
+    const data = await Transaksi.update(
+      { statusPengiriman, statusPesanan },
+      { where: { id } }
+    );
   };
 }
 // let tanggal = String(new Date());

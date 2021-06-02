@@ -48,4 +48,10 @@ transaksi.post(
   authorization,
   controller.updateResi
 );
+
+transaksi.post(
+  `/pesanan-selesai`,
+  authentication,
+  controller.pesananSelesai
+);
 module.exports = transaksi;

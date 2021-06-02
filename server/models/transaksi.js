@@ -32,6 +32,7 @@ module.exports = (sequelize, DataTypes) => {
       alamatPengiriman: DataTypes.STRING,
       telfonPenerima: DataTypes.STRING,
       referralCode: DataTypes.STRING,
+      expiredAt: DataTypes.DATE,
     },
     {
       sequelize,
