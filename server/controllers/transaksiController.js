@@ -200,6 +200,17 @@ class Controller {
     return res.status(200).json({ message: "success" });
   };
 
+  static ubahStatusPembayaran = async (req, res) => {
+    const { statusPembayaran, id } = req.body;
+    console.log(statusPembayaran, id);
+    const transaksi = await Transaksi.update(
+      { statusPembayaran },
+      { where: { id } }
+    );
+    console.log(transaksi);
+    return res.status(200).json({ messsage: "success" });
+  };
+
   static pesananSelesai = async (req, res) => {
     const { statusPengiriman, statusPesanan, id } = req.body;
     const data = await Transaksi.update(

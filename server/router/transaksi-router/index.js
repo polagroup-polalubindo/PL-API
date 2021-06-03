@@ -50,8 +50,11 @@ transaksi.post(
 );
 
 transaksi.post(
-  `/pesanan-selesai`,
+  "/ubah-status-pembayaran",
   authentication,
-  controller.pesananSelesai
+  authorization,
+  controller.ubahStatusPembayaran
 );
+
+transaksi.post(`/pesanan-selesai`, authentication, controller.pesananSelesai);
 module.exports = transaksi;
