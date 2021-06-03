@@ -217,6 +217,7 @@ class Controller {
       { statusPengiriman, statusPesanan },
       { where: { id } }
     );
+    return res.status(200).json({ message: "success" });
   };
 }
 // let tanggal = String(new Date());

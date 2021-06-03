@@ -20,6 +20,9 @@ module.exports = {
       kurir: {
         type: Sequelize.STRING,
       },
+      serviceKurir: {
+        type: Sequelize.STRING,
+      },
       statusPesanan: {
         type: Sequelize.STRING,
       },
