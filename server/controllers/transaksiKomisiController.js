@@ -37,30 +37,20 @@ class Controller {
     const data = await TransaksiKomisi.findAll({
       include: [Transaksi, User],
     });
-    const komisiData = await Komisi.findAll();
+    const komisiData = await Komisi.findAll({ include: User });
 
-    const newData = [];
-
-    for (let i = 0; i < data.length; i++) {
-      for (let j = 0; j < komisiData.length; j++) {
-        if (data[i].komisiId === komisiData[j].id) {
-          const filter = newData.filter((el) => el.id === komisiData[j].id);
-          if (filter.length === 0) {
-            const temp = komisiData[j].dataValues;
-            if (!temp.transaksi) {
-              temp.transaksi = [];
-            }
-            temp.transaksi.push(data[i]);
-            newData.push(temp);
-          } else {
-            newData.map((el) => {
-              if (el.id === komisiData[j].id) [el.transaksi.push(data[i])];
-            });
+    for (let i = 0; i < komisiData.length; i++) {
+      for (let j = 0; j < data.length; j++) {
+        if (data[j].komisiId === komisiData[i].id) {
+          if (!komisiData[i].dataValues.transaksi) {
+            komisiData[i].dataValues.transaksi = [];
           }
+          komisiData[i].dataValues.transaksi.push(data[j]);
+          console.log(komisiData[i]);
         }
       }
     }
-    return res.status(200).json(newData);
+    return res.status(200).json(komisiData);
   };
 }
 
