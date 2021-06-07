@@ -44,7 +44,7 @@ class Controller {
         const validasiPassword = compareHash(password, data.password);
         if (validasiPassword) {
           const access_token = generateToken(data.dataValues);
-          return res.status(200).json({ access_token });
+          return res.status(200).json({ data, access_token });
         } else {
           throw { message: `invalid email/password` };
         }
@@ -101,9 +101,36 @@ class Controller {
 
   static addCustomer = async (req, res) => {
     try {
-      const { email, phone, nama } = req.body;
+      const {
+        email,
+        phone,
+        nama,
+        referralStatus,
+        statusPremier,
+        discount,
+        bank,
+        noRekening,
+        photo,
+        noKtp,
+        noNPWP,
+        totalPembelian,
+      } = req.body;
       console.log(email, phone, nama);
-      const newCustomer = await User.create({ email, phone, nama });
+      const newCustomer = await User.create({
+        email,
+        phone,
+        nama,
+        password: phone,
+        referralStatus,
+        statusPremier,
+        discount,
+        bank,
+        noRekening,
+        photo,
+        noKtp,
+        noNPWP,
+        totalPembelian,
+      });
       const komisiCustomer = await Komisi.create({ userId: newCustomer.id });
       return res.status(200).json({
         message: `success adding customer`,

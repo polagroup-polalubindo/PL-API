@@ -21,7 +21,7 @@ user.post("/add-ktp-npwp", authentication, controller.addKtpAndNPWP);
 // CMS
 
 user.get("/customer", authentication, authorization, controller.getAllCustomer);
-user.post("/customer", authentication, authorization, controller.addCustomer);
+user.post("/add-customer", authentication, authorization, controller.addCustomer);
 user.get(
   `/customer/:customerId`,
   authentication,
