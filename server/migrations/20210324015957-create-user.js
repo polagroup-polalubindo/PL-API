@@ -44,6 +44,9 @@ module.exports = {
       referralStatus: {
         type: Sequelize.BOOLEAN,
       },
+      statusPremier: {
+        type: Sequelize.STRING,
+      },
       bank: {
         type: Sequelize.STRING,
       },

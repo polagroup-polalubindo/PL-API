@@ -78,6 +78,15 @@ class Controller {
     return res.status(200).json(data);
   };
 
+  static addKtpAndNPWP = async (req, res) => {
+    const { noKtp, noNPWP } = req.body;
+    const editData = await User.update(
+      { noKtp, noNPWP, statusPremier: "menunggu approval" },
+      { where: { id: req.user.id } }
+    );
+    return res.status(200).json({ message: "success" });
+  };
+
   // CMS
 
   static getAllCustomer = async (req, res) => {

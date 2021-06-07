@@ -87,30 +87,34 @@ class Controller {
       } = req.body;
       const { ref } = req.query;
       if (ref) {
-        const { id } = await User.findOne({
+        const { id, referralStatus } = await User.findOne({
           where: { referral: ref },
         });
-        const addNewTransaksiKomisi = await TransaksiKomisi.create({
-          komisiId: id,
-          userId: req.user.id,
-          nominal: totalHarga * 0.1,
-          transaksiId: req.params.transaksiId,
-        });
-        const getUserKomisiData = await Komisi.findOne({
-          where: { userId: id },
-        });
-        getUserKomisiData.totalKomisi =
-          getUserKomisiData.totalKomisi + Number(totalHarga) * 0.1;
-        if (getUserKomisiData.sisaKomisi === 0) {
-          getUserKomisiData.sisaKomisi = getUserKomisiData.totalKomisi;
-        } else {
-          getUserKomisiData.sisaKomisi += Number(totalHarga) * 0.1;
+        if (referralStatus) {
+          const addNewTransaksiKomisi = await TransaksiKomisi.create({
+            komisiId: id,
+            userId: req.user.id,
+            nominal: totalHarga * 0.1,
+            transaksiId: req.params.transaksiId,
+          });
+
+          const getUserKomisiData = await Komisi.findOne({
+            where: { userId: id },
+          });
+
+          getUserKomisiData.totalKomisi =
+            getUserKomisiData.totalKomisi + Number(totalHarga) * 0.1;
+          if (getUserKomisiData.sisaKomisi === 0) {
+            getUserKomisiData.sisaKomisi = getUserKomisiData.totalKomisi;
+          } else {
+            getUserKomisiData.sisaKomisi += Number(totalHarga) * 0.1;
+          }
+
+          const addTotalKomisi = await Komisi.update(
+            getUserKomisiData.dataValues,
+            { where: { userId: id } }
+          );
         }
-        console.log(getUserKomisiData, "<<<");
-        const addTotalKomisi = await Komisi.update(
-          getUserKomisiData.dataValues,
-          { where: { userId: id } }
-        );
       }
       const edited = await Transaksi.update(
         {

@@ -1,4 +1,3 @@
-const { response } = require("express");
 const { TransaksiKomisi, Komisi, User, Transaksi, Cart } = require("../models");
 
 class Controller {
@@ -46,7 +45,6 @@ class Controller {
             komisiData[i].dataValues.transaksi = [];
           }
           komisiData[i].dataValues.transaksi.push(data[j]);
-          console.log(komisiData[i]);
         }
       }
     }

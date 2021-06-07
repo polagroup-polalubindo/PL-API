@@ -67,6 +67,7 @@ module.exports = (sequelize, DataTypes) => {
       role: DataTypes.STRING,
       referral: DataTypes.STRING,
       referralStatus: DataTypes.BOOLEAN,
+      statusPremier: DataTypes.STRING,
       status: DataTypes.BOOLEAN,
       discountStatus: DataTypes.BOOLEAN,
       discount: DataTypes.INTEGER,
