@@ -154,6 +154,16 @@ class Controller {
     }
   };
 
+  static ubahstatusPremier = async (req, res) => {
+    const { statusPremier, id } = req.body;
+    const updateStatus = await User.update(
+      { statusPremier },
+      { where: { id } }
+    );
+    console.log(updateStatus);
+    return res.status(200).json({ message: "success" });
+  };
+
   static editData = async (req, res) => {
     try {
       const { email, password, phone, nama, status, discountStatus, discount } =
