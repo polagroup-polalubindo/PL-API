@@ -28,6 +28,12 @@ user.post(
   authorization,
   controller.addCustomer
 );
+user.post(
+  "/ubah-status-premier",
+  authentication,
+  authorization,
+  controller.ubahstatusPremier
+);
 user.get(
   `/customer/:customerId`,
   authentication,
