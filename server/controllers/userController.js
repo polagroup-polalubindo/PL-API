@@ -173,6 +173,15 @@ class Controller {
     return res.status(200).json({ message: "success" });
   };
 
+  static ubahStatusCustomer = async (req, res) => {
+    const { status } = req.body;
+    const updateStatus = await User.update(
+      { status },
+      { where: { id: req.user.id } }
+    );
+    return res.status(200).json({ message: "success" });
+  };
+
   static editData = async (req, res) => {
     try {
       const { email, password, phone, nama, status, discountStatus, discount } =
