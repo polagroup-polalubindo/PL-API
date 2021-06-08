@@ -34,6 +34,13 @@ user.post(
   authorization,
   controller.ubahstatusPremier
 );
+user.post(
+  "/ubah-status-customer",
+  authentication,
+  authorization,
+  controller.ubahStatusCustomer
+);
+
 user.get(
   `/customer/:customerId`,
   authentication,
