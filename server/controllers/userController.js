@@ -87,6 +87,15 @@ class Controller {
     return res.status(200).json({ message: "success" });
   };
 
+  static addAlamat = async (req, res) => {
+    const { alamat } = req.body;
+    const updateAlamat = await User.update(
+      { alamat },
+      { where: { id: req.user.id } }
+    );
+    return res.status(200).json({ message: "success" });
+  };
+
   // CMS
 
   static getAllCustomer = async (req, res) => {
