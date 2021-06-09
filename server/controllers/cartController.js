@@ -30,10 +30,10 @@ class Controller {
       let newUserId;
       if (!req.body.access_token) {
         const { dataValues } = await User.create({
-          email: userData?.email,
-          phone: userData?.phone,
-          nama: userData?.nama,
-          password: userData?.phone,
+          email: userData.email,
+          phone: userData.phone,
+          nama: userData.nama,
+          password: userData.phone,
         });
         newUserId = dataValues.id;
         const komisiCustomer = await Komisi.create({ userId: dataValues.id });
