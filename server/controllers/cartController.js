@@ -85,40 +85,7 @@ class Controller {
         kurir,
         expiredAt,
       } = req.body;
-      const { ref } = req.query;
-      if (ref) {
-        const { id, referralStatus } = await User.findOne({
-          where: { referral: ref },
-        });
-        const komisiData = await Komisi.findOne({ where: { userId: id } });
-        if (referralStatus) {
-          const addNewTransaksiKomisi = await TransaksiKomisi.create({
-            komisiId: komisiData.id,
-            userId: req.user.id,
-            nominal: (totalHarga - ongkosKirim) * 0.1,
-            transaksiId: req.params.transaksiId,
-          });
 
-          const getUserKomisiData = await Komisi.findOne({
-            where: { userId: id },
-          });
-
-          getUserKomisiData.totalKomisi =
-            getUserKomisiData.totalKomisi +
-            Number(totalHarga - ongkosKirim) * 0.1;
-          if (getUserKomisiData.sisaKomisi === 0) {
-            getUserKomisiData.sisaKomisi = getUserKomisiData.totalKomisi;
-          } else {
-            getUserKomisiData.sisaKomisi +=
-              Number(totalHarga - ongkosKirim) * 0.1;
-          }
-
-          const addTotalKomisi = await Komisi.update(
-            getUserKomisiData.dataValues,
-            { where: { userId: id } }
-          );
-        }
-      }
       const edited = await Transaksi.update(
         {
           invoice,

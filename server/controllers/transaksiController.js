@@ -1,4 +1,11 @@
-const { Transaksi, Cart, Produk, User } = require("../models");
+const {
+  Transaksi,
+  Cart,
+  Produk,
+  User,
+  Komisi,
+  TransaksiKomisi,
+} = require("../models");
 const { Op } = require("sequelize");
 const cronJob = require("cron").CronJob;
 
@@ -108,7 +115,47 @@ class Controller {
       statusPesanan,
       totalHarga,
       ongkosKirim,
+      referralCode,
     } = req.body;
+
+    if (referralCode !== null) {
+      const userData = await User.findOne({
+        where: { referral: referralCode },
+      });
+      const komisiData = await Komisi.findOne({
+        where: { userId: userData.id },
+      });
+
+      if (userData.referralStatus) {
+        const addNewTransaksiKomisi = await TransaksiKomisi.create({
+          komisiId: komisiData.id,
+          userId: Carts[0].userId,
+          nominal: (totalHarga - ongkosKirim) * 0.1,
+          transaksiId: id,
+        });
+
+        const getUserKomisiData = await Komisi.findOne({
+          where: { userId: userData.id },
+        });
+
+        getUserKomisiData.totalKomisi =
+          getUserKomisiData.totalKomisi +
+          Number(totalHarga - ongkosKirim) * 0.1;
+        if (getUserKomisiData.sisaKomisi === 0) {
+          getUserKomisiData.sisaKomisi = getUserKomisiData.totalKomisi;
+        } else {
+          getUserKomisiData.sisaKomisi +=
+            Number(totalHarga - ongkosKirim) * 0.1;
+        }
+
+        const addTotalKomisi = await Komisi.update(
+          getUserKomisiData.dataValues,
+          {
+            where: { userId: userData.id },
+          }
+        );
+      }
+    }
     const konfirmasi = await Transaksi.update(
       { id, statusPembayaran, statusPengiriman, statusPesanan },
       { where: { id } }
@@ -220,9 +267,5 @@ class Controller {
     return res.status(200).json({ message: "success" });
   };
 }
-// let tanggal = String(new Date());
-// tanggal = tanggal.split("T");
-// console.log(tanggal);
-// const update = new cronJob({});
 
 module.exports = Controller;
