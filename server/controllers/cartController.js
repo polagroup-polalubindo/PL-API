@@ -90,11 +90,12 @@ class Controller {
         const { id, referralStatus } = await User.findOne({
           where: { referral: ref },
         });
+        const komisiData = await Komisi.findOne({ where: { userId: id } });
         if (referralStatus) {
           const addNewTransaksiKomisi = await TransaksiKomisi.create({
-            komisiId: id,
+            komisiId: komisiData.id,
             userId: req.user.id,
-            nominal: totalHarga * 0.1,
+            nominal: (totalHarga - ongkosKirim) * 0.1,
             transaksiId: req.params.transaksiId,
           });
 
@@ -103,11 +104,13 @@ class Controller {
           });
 
           getUserKomisiData.totalKomisi =
-            getUserKomisiData.totalKomisi + Number(totalHarga) * 0.1;
+            getUserKomisiData.totalKomisi +
+            Number(totalHarga - ongkosKirim) * 0.1;
           if (getUserKomisiData.sisaKomisi === 0) {
             getUserKomisiData.sisaKomisi = getUserKomisiData.totalKomisi;
           } else {
-            getUserKomisiData.sisaKomisi += Number(totalHarga) * 0.1;
+            getUserKomisiData.sisaKomisi +=
+              Number(totalHarga - ongkosKirim) * 0.1;
           }
 
           const addTotalKomisi = await Komisi.update(
