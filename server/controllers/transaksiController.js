@@ -37,10 +37,17 @@ class Controller {
               "siap di kirim",
               "dalam pengiriman",
               "selesai",
+              "pesanan di tolak",
+              "pesanan selesai",
             ],
           },
           statusPesanan: {
-            [Op.or]: ["menunggu konfirmasi", "pesanan di konfirmasi"],
+            [Op.or]: [
+              "menunggu konfirmasi",
+              "pesanan di konfirmasi",
+              "pesanan di tolak",
+              "pesanan selesai",
+            ],
           },
         },
         include: {
@@ -118,44 +125,44 @@ class Controller {
       referralCode,
     } = req.body;
 
-    if (referralCode !== null) {
-      const userData = await User.findOne({
-        where: { referral: referralCode },
-      });
-      const komisiData = await Komisi.findOne({
-        where: { userId: userData.id },
-      });
+    // if (referralCode !== null) {
+    //   const userData = await User.findOne({
+    //     where: { referral: referralCode },
+    //   });
+    //   const komisiData = await Komisi.findOne({
+    //     where: { userId: userData.id },
+    //   });
 
-      if (userData.referralStatus) {
-        const addNewTransaksiKomisi = await TransaksiKomisi.create({
-          komisiId: komisiData.id,
-          userId: Carts[0].userId,
-          nominal: (totalHarga - ongkosKirim) * 0.1,
-          transaksiId: id,
-        });
+    //   if (userData.referralStatus) {
+    //     const addNewTransaksiKomisi = await TransaksiKomisi.create({
+    //       komisiId: komisiData.id,
+    //       userId: Carts[0].userId,
+    //       nominal: (totalHarga - ongkosKirim) * 0.1,
+    //       transaksiId: id,
+    //     });
 
-        const getUserKomisiData = await Komisi.findOne({
-          where: { userId: userData.id },
-        });
+    //     const getUserKomisiData = await Komisi.findOne({
+    //       where: { userId: userData.id },
+    //     });
 
-        getUserKomisiData.totalKomisi =
-          getUserKomisiData.totalKomisi +
-          Number(totalHarga - ongkosKirim) * 0.1;
-        if (getUserKomisiData.sisaKomisi === 0) {
-          getUserKomisiData.sisaKomisi = getUserKomisiData.totalKomisi;
-        } else {
-          getUserKomisiData.sisaKomisi +=
-            Number(totalHarga - ongkosKirim) * 0.1;
-        }
+    //     getUserKomisiData.totalKomisi =
+    //       getUserKomisiData.totalKomisi +
+    //       Number(totalHarga - ongkosKirim) * 0.1;
+    //     if (getUserKomisiData.sisaKomisi === 0) {
+    //       getUserKomisiData.sisaKomisi = getUserKomisiData.totalKomisi;
+    //     } else {
+    //       getUserKomisiData.sisaKomisi +=
+    //         Number(totalHarga - ongkosKirim) * 0.1;
+    //     }
 
-        const addTotalKomisi = await Komisi.update(
-          getUserKomisiData.dataValues,
-          {
-            where: { userId: userData.id },
-          }
-        );
-      }
-    }
+    //     const addTotalKomisi = await Komisi.update(
+    //       getUserKomisiData.dataValues,
+    //       {
+    //         where: { userId: userData.id },
+    //       }
+    //     );
+    //   }
+    // }
     const konfirmasi = await Transaksi.update(
       { id, statusPembayaran, statusPengiriman, statusPesanan },
       { where: { id } }
@@ -259,7 +266,53 @@ class Controller {
   };
 
   static pesananSelesai = async (req, res) => {
-    const { statusPengiriman, statusPesanan, id } = req.body;
+    const {
+      Carts,
+      id,
+      statusPengiriman,
+      statusPesanan,
+      totalHarga,
+      ongkosKirim,
+      referralCode,
+    } = req.body;
+    if (referralCode !== null) {
+      const userData = await User.findOne({
+        where: { referral: referralCode },
+      });
+      const komisiData = await Komisi.findOne({
+        where: { userId: userData.id },
+      });
+
+      if (userData.referralStatus) {
+        const addNewTransaksiKomisi = await TransaksiKomisi.create({
+          komisiId: komisiData.id,
+          userId: Carts[0].userId,
+          nominal: (totalHarga - ongkosKirim) * 0.1,
+          transaksiId: id,
+        });
+
+        const getUserKomisiData = await Komisi.findOne({
+          where: { userId: userData.id },
+        });
+
+        getUserKomisiData.totalKomisi =
+          getUserKomisiData.totalKomisi +
+          Number(totalHarga - ongkosKirim) * 0.1;
+        if (getUserKomisiData.sisaKomisi === 0) {
+          getUserKomisiData.sisaKomisi = getUserKomisiData.totalKomisi;
+        } else {
+          getUserKomisiData.sisaKomisi +=
+            Number(totalHarga - ongkosKirim) * 0.1;
+        }
+
+        const addTotalKomisi = await Komisi.update(
+          getUserKomisiData.dataValues,
+          {
+            where: { userId: userData.id },
+          }
+        );
+      }
+    }
     const data = await Transaksi.update(
       { statusPengiriman, statusPesanan },
       { where: { id } }
