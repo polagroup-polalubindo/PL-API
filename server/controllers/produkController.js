@@ -1,5 +1,5 @@
 const { Produk, Brand } = require("../models");
-const baseUrl = `http://localhost:3000/`;
+const baseUrl = `http://http://157.230.248.17//`;
 class Controller {
   static getAll = async (req, res) => {
     try {
