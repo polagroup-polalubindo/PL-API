@@ -1,5 +1,6 @@
 const { Produk, Brand } = require("../models");
 const baseUrl = `http://157.230.248.17/`;
+// const baseUrl = `http://localhost:80/`;
 class Controller {
   static getAll = async (req, res) => {
     try {
@@ -18,6 +19,7 @@ class Controller {
       } = req;
       const newData = JSON.parse(data);
       newData.fotoProduk = baseUrl + file.filename;
+      newData.stock = +newData.stock;
       const addProduk = await Produk.create(newData);
       return res.status(201).json(addProduk);
     } catch (error) {

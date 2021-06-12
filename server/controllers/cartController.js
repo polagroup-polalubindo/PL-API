@@ -44,6 +44,7 @@ class Controller {
         newUserId = data.id;
         access_token = req.body.access_token;
       }
+
       const { id } = await Transaksi.create(transaksiData);
       const promiseQuery = [];
       value.map((val) => {

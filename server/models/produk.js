@@ -66,10 +66,7 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   Produk.beforeCreate((produk, option) => {
-    produk.stock = 0;
-    produk.statusProduk = true;
     produk.komisi = 10;
-    produk.komisiProduk = true;
   });
   return Produk;
 };
