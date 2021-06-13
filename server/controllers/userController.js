@@ -124,7 +124,6 @@ class Controller {
         noNPWP,
         totalPembelian,
       } = req.body;
-      console.log(email, phone, nama);
       const newCustomer = await User.create({
         email,
         phone,
@@ -148,7 +147,9 @@ class Controller {
         email: newCustomer.email,
       });
     } catch (error) {
-      return res.status(400).json(error);
+      error.name === "SequelizeValidationError"
+        ? res.status(400).json({ errMessage: error.errors[0].message })
+        : res.status(400).json(error);
     }
   };
 
