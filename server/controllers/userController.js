@@ -165,9 +165,9 @@ class Controller {
   };
 
   static ubahstatusPremier = async (req, res) => {
-    const { statusPremier, id } = req.body;
+    const { statusPremier, referralStatus, id } = req.body;
     const updateStatus = await User.update(
-      { statusPremier },
+      { statusPremier, referralStatus },
       { where: { id } }
     );
     console.log(updateStatus);
