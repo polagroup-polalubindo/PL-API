@@ -74,8 +74,28 @@ module.exports = (sequelize, DataTypes) => {
       bank: DataTypes.STRING,
       noRekening: DataTypes.STRING,
       photo: DataTypes.STRING,
-      noKtp: DataTypes.STRING,
-      noNPWP: DataTypes.STRING,
+      noKtp: {
+        type: DataTypes.STRING,
+        validate: {
+          isUnique: async function (value) {
+            const userData = await User.findOne({ where: { noKtp: value } });
+            if (userData) {
+              throw { message: `no KTP already in use` };
+            }
+          },
+        },
+      },
+      noNPWP: {
+        type: DataTypes.STRING,
+        validate: {
+          isUnique: async function (value) {
+            const userData = await User.findOne({ where: { noNPWP: value } });
+            if (userData) {
+              throw { message: `no NPWP already in use` };
+            }
+          },
+        },
+      },
       totalPembelian: DataTypes.INTEGER,
     },
     {

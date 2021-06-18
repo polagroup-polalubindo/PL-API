@@ -19,6 +19,9 @@ class Controller {
           model: Cart,
           include: Produk,
         },
+        order: [
+          ['createdAt', 'DESC']
+        ],
       });
       return res.status(200).json(allTransaksi);
     } catch (error) {
@@ -55,6 +58,9 @@ class Controller {
           model: Cart,
           include: Produk,
         },
+        order: [
+          ['createdAt', 'DESC']
+        ]
       });
       return res.status(200).json(allTransaksi);
     } catch (error) {
@@ -109,6 +115,9 @@ class Controller {
   static getAllTransaksi = async (req, res) => {
     const data = await Transaksi.findAll({
       include: { model: Cart, include: [Produk, User] },
+      order: [
+        ['createdAt', 'DESC']
+      ]
     });
     return res.status(200).json(data);
   };
