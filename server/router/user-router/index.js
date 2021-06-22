@@ -7,6 +7,7 @@ const authentication = require("../../middleware/authentication");
 
 user.post("/register", controller.register);
 user.post("/login", controller.login);
+user.get("/check-token", controller.checkToken);
 user.get("/refcode/:access_token", controller.getUserRefcode);
 
 user.get(

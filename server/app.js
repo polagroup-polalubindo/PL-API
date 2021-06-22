@@ -5,10 +5,12 @@ const cors = require("cors");
 const port = process.env.PORT;
 const router = require("./router");
 const path = require("path");
+const morgan = require('morgan')
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
+app.use(morgan('dev'))
 
 app.use("/", express.static(path.join(__dirname, "/")));
 app.use(router);

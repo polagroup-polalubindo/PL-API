@@ -56,6 +56,22 @@ class Controller {
     }
   };
 
+  static checkToken = async (req, res) => {
+    try {
+      const decode = await verifyToken(req.headers.access_token);
+      let dataUserLogin = await User.findByPk(decode.id);
+
+      if (dataUserLogin) {
+        return res.status(200).json({ data: dataUserLogin });
+      } else {
+        throw { message: `user not found` };
+      }
+    } catch (error) {
+      console.log(error)
+      return res.status(400).json(error);
+    }
+  };
+
   static getUserRefcode = async (req, res) => {
     const data = await verifyToken(req.params.access_token);
     return res.status(200).json(data.referral);
@@ -79,14 +95,14 @@ class Controller {
   };
 
   static addKtpAndNPWP = async (req, res) => {
-    try{
+    try {
       const { noKtp, noNPWP } = req.body;
       const editData = await User.update(
         { noKtp, noNPWP, statusPremier: "menunggu approval" },
         { where: { id: req.user.id } }
       );
       return res.status(200).json({ message: "success" });
-    }catch(error){
+    } catch (error) {
       return res.status(400).json(error);
     }
   };
