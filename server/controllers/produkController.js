@@ -4,7 +4,13 @@ const baseUrl = `http://157.230.248.17/`;
 class Controller {
   static getAll = async (req, res) => {
     try {
-      const allProduk = await Produk.findAll({ include: Brand });
+      let allProduk
+      if (req.query.all) {
+        allProduk = await Produk.findAll({ include: Brand });
+      } else {
+        allProduk = await Produk.findAll({ where: { statusProduk: 1 }, include: Brand });
+      }
+
       return res.status(200).json(allProduk);
     } catch (error) {
       return res.status(400).json(error);

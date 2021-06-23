@@ -6,7 +6,11 @@ const authorization = async (req, res, next) => {
     if (data.role === "admin") {
       next();
     } else {
-      throw { message: `you're not an admin` };
+      if (req.params.customerId && +req.params.customerId === req.user.id) {
+        next()
+      } else {
+        throw { message: `you're not an admin` };
+      }
     }
   } catch (error) {
     return res.status(401).json(error);
