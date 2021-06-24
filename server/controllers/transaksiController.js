@@ -285,22 +285,25 @@ class Controller {
       referralCode,
     } = req.body;
     if (referralCode !== null) {
+      console.log("PESANAN SELESAI 1", id, new Date())
       const userData = await User.findOne({
         where: { referral: referralCode },
       });
       const komisiData = await Komisi.findOne({
         where: { userId: userData.id },
       });
+      console.log("PESANAN SELESAI 2", id, new Date())
 
       if (userData.referralStatus) {
-        const addNewTransaksiKomisi = await TransaksiKomisi.create({
+        await TransaksiKomisi.create({
           komisiId: komisiData.id,
           userId: Carts[0].userId,
           nominal: (totalHarga - ongkosKirim) * 0.1,
           transaksiId: id,
         });
+        console.log("PESANAN SELESAI 3", id, new Date())
 
-        const getUserKomisiData = await Komisi.findOne({
+        let getUserKomisiData = await Komisi.findOne({
           where: { userId: userData.id },
         });
 
@@ -313,19 +316,23 @@ class Controller {
           getUserKomisiData.sisaKomisi +=
             Number(totalHarga - ongkosKirim) * 0.1;
         }
+        console.log("PESANAN SELESAI 4", id, new Date())
 
-        const addTotalKomisi = await Komisi.update(
+        await Komisi.update(
           getUserKomisiData.dataValues,
           {
             where: { userId: userData.id },
           }
         );
+        console.log("PESANAN SELESAI 5", id, new Date())
       }
     }
+    console.log("PESANAN SELESAI 6", id, new Date())
     const data = await Transaksi.update(
       { statusPengiriman, statusPesanan },
       { where: { id } }
     );
+    console.log("PESANAN SELESAI 7", id, new Date())
     return res.status(200).json({ message: "success" });
   };
 }
