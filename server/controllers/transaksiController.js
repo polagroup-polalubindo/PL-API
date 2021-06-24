@@ -42,6 +42,7 @@ class Controller {
               "selesai",
               "pesanan di tolak",
               "pesanan selesai",
+              "dibatalkan"
             ],
           },
           statusPesanan: {
@@ -50,6 +51,7 @@ class Controller {
               "pesanan di konfirmasi",
               "pesanan di tolak",
               "pesanan selesai",
+              "dibatalkan"
             ],
           },
         },
