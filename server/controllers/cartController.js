@@ -46,6 +46,14 @@ class Controller {
         access_token = req.body.access_token;
       }
 
+      if(transaksiData.referralCode){
+        const checkUserReferralCode = await User.findOne({
+          where: { referral: referralCode },
+        });
+
+        if(!checkUserReferralCode) delete transaksiData.referralCode
+      }
+
       const { id } = await Transaksi.create(transaksiData);
       const promiseQuery = [];
       value.map((val) => {

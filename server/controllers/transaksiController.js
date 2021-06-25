@@ -286,52 +286,58 @@ class Controller {
       ongkosKirim,
       referralCode,
     } = req.body;
+    let statusReferralCode = true
     if (referralCode !== null) {
       console.log("PESANAN SELESAI 1", id, new Date())
       const userData = await User.findOne({
         where: { referral: referralCode },
       });
-      const komisiData = await Komisi.findOne({
-        where: { userId: userData.id },
-      });
-      console.log("PESANAN SELESAI 2", id, new Date())
 
-      if (userData.referralStatus) {
-        await TransaksiKomisi.create({
-          komisiId: komisiData.id,
-          userId: Carts[0].userId,
-          nominal: (totalHarga - ongkosKirim) * 0.1,
-          transaksiId: id,
-        });
-        console.log("PESANAN SELESAI 3", id, new Date())
-
-        let getUserKomisiData = await Komisi.findOne({
+      if (userData) {
+        const komisiData = await Komisi.findOne({
           where: { userId: userData.id },
         });
+        console.log("PESANAN SELESAI 2", id, new Date())
 
-        getUserKomisiData.totalKomisi =
-          getUserKomisiData.totalKomisi +
-          Number(totalHarga - ongkosKirim) * 0.1;
-        if (getUserKomisiData.sisaKomisi === 0) {
-          getUserKomisiData.sisaKomisi = getUserKomisiData.totalKomisi;
-        } else {
-          getUserKomisiData.sisaKomisi +=
-            Number(totalHarga - ongkosKirim) * 0.1;
-        }
-        console.log("PESANAN SELESAI 4", id, new Date())
+        if (userData.referralStatus) {
+          await TransaksiKomisi.create({
+            komisiId: komisiData.id,
+            userId: Carts[0].userId,
+            nominal: (totalHarga - ongkosKirim) * 0.1,
+            transaksiId: id,
+          });
+          console.log("PESANAN SELESAI 3", id, new Date())
 
-        await Komisi.update(
-          getUserKomisiData.dataValues,
-          {
+          let getUserKomisiData = await Komisi.findOne({
             where: { userId: userData.id },
+          });
+
+          getUserKomisiData.totalKomisi =
+            getUserKomisiData.totalKomisi +
+            Number(totalHarga - ongkosKirim) * 0.1;
+          if (getUserKomisiData.sisaKomisi === 0) {
+            getUserKomisiData.sisaKomisi = getUserKomisiData.totalKomisi;
+          } else {
+            getUserKomisiData.sisaKomisi +=
+              Number(totalHarga - ongkosKirim) * 0.1;
           }
-        );
-        console.log("PESANAN SELESAI 5", id, new Date())
+          console.log("PESANAN SELESAI 4", id, new Date())
+
+          await Komisi.update(
+            getUserKomisiData.dataValues,
+            {
+              where: { userId: userData.id },
+            }
+          );
+          console.log("PESANAN SELESAI 5", id, new Date())
+        }
+      } else {
+        statusReferralCode = false
       }
     }
     console.log("PESANAN SELESAI 6", id, new Date())
     const data = await Transaksi.update(
-      { statusPengiriman, statusPesanan },
+      { statusPengiriman, statusPesanan, referralCode: statusReferralCode ? referralCode : null },
       { where: { id } }
     );
     console.log("PESANAN SELESAI 7", id, new Date())
