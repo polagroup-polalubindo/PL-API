@@ -96,9 +96,9 @@ class Controller {
 
   static addKtpAndNPWP = async (req, res) => {
     try {
-      const { noKtp, noNPWP } = req.body;
+      const { noKtp, noNPWP, bank, noRekening, namaRekening } = req.body;
       const editData = await User.update(
-        { noKtp, noNPWP, statusPremier: "menunggu approval" },
+        { noKtp, noNPWP, bank, noRekening, namaRekening, statusPremier: "menunggu approval" },
         { where: { id: req.user.id } }
       );
       return res.status(200).json({ message: "success" });

@@ -97,6 +97,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       totalPembelian: DataTypes.INTEGER,
+      namaRekening: DataTypes.STRING
     },
     {
       sequelize,
