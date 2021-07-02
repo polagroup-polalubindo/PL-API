@@ -120,6 +120,7 @@ class Controller {
 
   static getAllCustomer = async (req, res) => {
     const data = await User.findAll({
+      where: { role: 'customer' },
       include: {
         model: Komisi,
         include: { model: TransaksiKomisi, include: User },
