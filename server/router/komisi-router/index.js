@@ -14,4 +14,11 @@ komisi.get(
   controller.getAllKomisi
 );
 
+komisi.put(
+  "/komisi/:id",
+  authentication,
+  authorization,
+  controller.updateKomisi
+);
+
 module.exports = komisi;

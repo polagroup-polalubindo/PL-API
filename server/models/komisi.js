@@ -18,12 +18,15 @@ module.exports = (sequelize, DataTypes) => {
   Komisi.init({
     userId: DataTypes.STRING,
     totalKomisi: DataTypes.INTEGER,
-    sisaKomisi: DataTypes.INTEGER
+    sisaKomisi: DataTypes.INTEGER,
+    month: DataTypes.STRING,
+    year: DataTypes.STRING,
+    status: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'Komisi',
   });
-  Komisi.beforeCreate((Komisi,option)=>{
+  Komisi.beforeCreate((Komisi, option) => {
     Komisi.totalKomisi = 0
     Komisi.sisaKomisi = 0
   })

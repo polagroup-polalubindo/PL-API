@@ -37,7 +37,7 @@ class Controller {
           password: userData.phone,
         });
         newUserId = dataValues.id;
-        const komisiCustomer = await Komisi.create({ userId: dataValues.id });
+
         access_token = generateToken(dataValues);
       } else {
         const userLogin = verifyToken(req.body.access_token);
@@ -46,13 +46,30 @@ class Controller {
         access_token = req.body.access_token;
       }
 
-      if(transaksiData.referralCode){
+      if (transaksiData.referralCode) {
         const checkUserReferralCode = await User.findOne({
           where: { referral: referralCode },
         });
 
-        if(!checkUserReferralCode) delete transaksiData.referralCode
+        if (!checkUserReferralCode) delete transaksiData.referralCode
       }
+
+      let month = new Date().getMonth() + 1 < 10 ? `0${new Date().getMonth() + 1}` : new Date().getMonth() + 1
+      let date = new Date().getDate() < 10 ? `0${new Date().getDate()}` : new Date().getDate()
+      let lastTransaction = await Transaksi.findOne({ order: [['id', 'DESC']], attributes: ['id', 'invoice'] })
+
+      let lastInvoice = lastTransaction.invoice.split('/'), newNumber, newNumberString;
+      if (lastInvoice) {
+        let lastNoUrutInvoice = +lastInvoice[lastInvoice.length - 1]
+        newNumber = lastNoUrutInvoice + 1
+        newNumberString = '' + newNumber
+
+        for (let i = newNumberString.length; i < 4; i++) {
+          newNumberString = `0${newNumberString}`
+        }
+      }
+
+      transaksiData.invoice = `INV/${new Date().getFullYear()}${month}${date}/VK/${newNumberString}`
 
       const { id } = await Transaksi.create(transaksiData);
       const promiseQuery = [];

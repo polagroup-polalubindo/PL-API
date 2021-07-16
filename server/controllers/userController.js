@@ -14,7 +14,7 @@ class Controller {
       } else {
         newUser = await User.create({ email, phone, nama, password });
       }
-      const komisiCustomer = await Komisi.create({ userId: newUser.id });
+
       return res.status(201).json({
         message: "success register",
         nama: newUser.nama,
@@ -160,7 +160,7 @@ class Controller {
         noNPWP,
         totalPembelian,
       });
-      const komisiCustomer = await Komisi.create({ userId: newCustomer.id });
+
       return res.status(200).json({
         message: `success adding customer`,
         nama: newCustomer.nama,
