@@ -12,6 +12,8 @@ module.exports = (sequelize, DataTypes) => {
       Produk.belongsTo(models.Brand);
       Produk.belongsToMany(models.User, { through: models.Cart });
       Produk.hasMany(models.Cart);
+      Produk.hasMany(models.Sertifikasi);
+      Produk.hasMany(models.HargaGrosir);
     }
   }
   Produk.init(
@@ -52,12 +54,20 @@ module.exports = (sequelize, DataTypes) => {
       panjang: DataTypes.INTEGER,
       lebar: DataTypes.INTEGER,
       tinggi: DataTypes.INTEGER,
-      komisi: DataTypes.INTEGER,
+      // komisi: DataTypes.INTEGER,
       komisiStatus: DataTypes.BOOLEAN,
       hargaSatuan: DataTypes.INTEGER,
-      hargaGrosir: DataTypes.INTEGER,
-      levelKomisi: DataTypes.INTEGER,
+      // hargaGrosir: DataTypes.INTEGER,
+      // levelKomisi: DataTypes.INTEGER,
       brandId: DataTypes.INTEGER,
+      komisiLevel1: DataTypes.INTEGER,
+      komisiLevel2: DataTypes.INTEGER,
+      komisiLevel3: DataTypes.INTEGER,
+      TDS: DataTypes.STRING,
+      MSDS: DataTypes.STRING,
+      asuransiPengiriman: DataTypes.STRING,
+      layananPengiriman: DataTypes.STRING,
+      preorder: DataTypes.BOOLEAN,
     },
     {
       sequelize,
@@ -65,8 +75,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  Produk.beforeCreate((produk, option) => {
-    produk.komisi = 10;
-  });
+  // Produk.beforeCreate((produk, option) => {
+  //   produk.komisi = 10;
+  // });
   return Produk;
 };

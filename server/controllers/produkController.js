@@ -1,4 +1,4 @@
-const { Produk, Brand } = require("../models");
+const { Produk, Brand, HargaGrosir, Sertifikasi } = require("../models");
 const baseUrl = `http://157.230.248.17/`;
 // const baseUrl = `http://localhost:80/`;
 class Controller {
@@ -6,7 +6,7 @@ class Controller {
     try {
       let allProduk
       if (req.query.all) {
-        allProduk = await Produk.findAll({ include: Brand });
+        allProduk = await Produk.findAll({ include: [Brand, HargaGrosir, Sertifikasi] });
       } else {
         allProduk = await Produk.findAll({ where: { statusProduk: 1 }, include: Brand });
       }
@@ -20,13 +20,53 @@ class Controller {
   static addProduk = async (req, res) => {
     try {
       const {
-        file,
+        files,
         body: { data },
       } = req;
+
       const newData = JSON.parse(data);
-      newData.fotoProduk = baseUrl + file.filename;
+
+      newData.videoProduk = newData.urlVideo
+      newData.discount = newData.diskon || 0
+      newData.komisiLevel1 = newData.komisiLevel1 || 0
+      newData.komisiLevel2 = newData.komisiLevel2 || 0
+      newData.komisiLevel3 = newData.komisiLevel3 || 0
+      delete newData.urlVideo
+
+      if (files) {
+        delete newData.fotoProduk
+        delete newData.MSDS
+        delete newData.TDS
+
+        let checkFotoProduk = files.find(el => el.fieldname === 'image')
+        let checkMSDS = files.find(el => el.fieldname === 'MSDS')
+        let checkTDS = files.find(el => el.fieldname === 'TDS')
+
+        newData.fotoProduk = checkFotoProduk ? baseUrl + checkFotoProduk.filename : ''
+        newData.MSDS = checkMSDS ? baseUrl + checkMSDS.filename : ''
+        newData.TDS = checkTDS ? baseUrl + checkTDS.filename : ''
+      }
+
       newData.stock = +newData.stock;
+
       const addProduk = await Produk.create(newData);
+
+      if (files) { // ADD SERTIFIKASI
+        let checkSertifikasi = await files.filter(el => el.fieldname === 'sertifikasi')
+
+        if (checkSertifikasi.length > 0) {
+          checkSertifikasi.forEach(async element => {
+            await Sertifikasi.create({ produkId: addProduk.id, path: baseUrl + element.filename })
+          });
+        }
+      }
+
+      if (newData.hargaGrosir.length > 0) {
+        newData.hargaGrosir.forEach(async el => {
+          if (el.banyaknya && el.harga) await HargaGrosir.create({ produkId: addProduk.id, banyak: el.banyaknya, harga: el.harga })
+        })
+      }
+
       return res.status(201).json(addProduk);
     } catch (error) {
       return res.status(400).json(error);
@@ -47,42 +87,80 @@ class Controller {
   static editProduk = async (req, res) => {
     try {
       const {
-        namaProduk,
-        deskripsi,
-        fotoProduk,
-        videoProduk,
-        stock,
-        sku,
-        weight,
-        panjang,
-        lebar,
-        tinggi,
-        // price,
-        hargaSatuan,
-        brandId,
-        statusProduk,
-        komisiProduk,
-      } = req.body;
-      const editedProduk = await Produk.update(
-        {
-          namaProduk,
-          deskripsi,
-          fotoProduk,
-          videoProduk,
-          stock,
-          sku,
-          weight,
-          panjang,
-          lebar,
-          tinggi,
-          // price,
-          hargaSatuan,
-          brandId,
-          statusProduk,
-          komisiProduk,
-        },
-        { where: { id: req.params.produkId } }
-      );
+        files,
+        file,
+        body: { data },
+        params: { produkId },
+      } = req;
+      const newData = JSON.parse(data);
+
+      newData.videoProduk = newData.urlVideo
+      newData.discount = newData.diskon || 0
+      newData.komisiLevel1 = newData.komisiLevel1 || 0
+      newData.komisiLevel2 = newData.komisiLevel2 || 0
+      newData.komisiLevel3 = newData.komisiLevel3 || 0
+
+      if (file) newData.fotoProduk = baseUrl + file.filename;
+
+      if (files) {
+        delete newData.fotoProduk
+        delete newData.MSDS
+        delete newData.TDS
+
+        let checkFotoProduk = files.find(el => el.fieldname === 'image')
+        let checkMSDS = files.find(el => el.fieldname === 'MSDS')
+        let checkTDS = files.find(el => el.fieldname === 'TDS')
+
+        newData.fotoProduk = checkFotoProduk ? baseUrl + checkFotoProduk.filename : ''
+        newData.MSDS = checkMSDS ? baseUrl + checkMSDS.filename : ''
+        newData.TDS = checkTDS ? baseUrl + checkTDS.filename : ''
+      }
+
+      newData.stock = +newData.stock;
+
+      let editedProduk = await Produk.update(newData, { where: { id: produkId } });
+
+      if (files) { // ADD SERTIFIKASI
+        let allSertifikasiSelectedProduct = await Sertifikasi.findAll({ where: { produkId: produkId } })
+
+        // HAPUS SERTIFIKASI BILA SUDAH DIHAPUS DI FRONTEND
+        if (newData.Sertifikasis.length === 0) await Sertifikasi.destroy({ where: { produkId: produkId } })
+        else {
+          allSertifikasiSelectedProduct.forEach(async (el) => {
+            let check = newData.Sertifikasis.find(element => element.id === el.id)
+            if (!check) await Sertifikasi.destroy({ where: { id: el.id } })
+          })
+        }
+
+        let checkSertifikasi = await files.filter(el => el.fieldname === 'sertifikasi')
+
+        if (checkSertifikasi.length > 0) {
+          checkSertifikasi.forEach(async element => {
+            await Sertifikasi.create({ produkId: produkId, path: baseUrl + element.filename })
+          });
+        }
+      }
+
+      if (newData.hargaGrosir.length === 0) {
+        await HargaGrosir.destroy({ where: { produkId: produkId } })
+      } else if (newData.hargaGrosir.length > 0) {
+        let allHargaGrosirSelectedProduct = await HargaGrosir.findAll({ where: { produkId: produkId } })
+
+        // HAPUS HARGAGROSIR BILA SUDAH DIHAPUS DI FRONTEND
+        if (newData.hargaGrosir.length === 0) await HargaGrosir.destroy({ where: { produkId: produkId } })
+        else {
+          allHargaGrosirSelectedProduct.forEach(async (el) => {
+            let check = newData.hargaGrosir.find(element => element.id === el.id)
+            if (!check) await HargaGrosir.destroy({ where: { id: el.id } })
+          })
+        }
+
+        newData.hargaGrosir.forEach(async el => {
+          if (el.banyaknya && el.harga && !el.id) await HargaGrosir.create({ produkId: produkId, banyak: el.banyaknya, harga: el.harga })
+        })
+      }
+
+
       return res.status(200).json(editedProduk);
     } catch (error) {
       return res.status(400).json(error);

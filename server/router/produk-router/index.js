@@ -11,9 +11,9 @@ produk.get("/produk", controller.getAll);
 
 produk.post(
   "/produk",
-  upload.single("file"),
   authentication,
   authorization,
+  upload.any(),
   controller.addProduk
 );
 produk.get(
@@ -26,6 +26,7 @@ produk.put(
   "/produk/:produkId",
   authentication,
   authorization,
+  upload.any(),
   controller.editProduk
 );
 produk.put(

@@ -206,10 +206,10 @@ class Controller {
 
   static editData = async (req, res) => {
     try {
-      const { email, password, phone, nama, status, discountStatus, discount } =
+      const { email, password, phone, nama, status, discountStatus, discount, noKtp, noNPWP } =
         req.body;
-      const newData = await User.update(
-        { email, password, phone, nama, status, discountStatus, discount },
+      await User.update(
+        { email, password, phone, nama, status, discountStatus, discount, noKtp, noNPWP },
         { where: { id: req.params.customerId } }
       );
       return res.status(200).json({ message: `edit complete` });
