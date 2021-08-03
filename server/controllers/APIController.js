@@ -11,7 +11,7 @@ class Controller {
     try {
       let ongkirSTD = 0, ongkirSMD = 0, ongkirDlite = 0, ongkirDtruck
       let data = { ...req.query }
-
+console.log(data)
       data.expressType = '00'
       let signSTD = MD5(`${JSON.stringify(data)}${process.env.APP_ID}${process.env.SECURITY_KEY}`)
 
@@ -29,6 +29,7 @@ class Controller {
           }
         })
       ongkirSTD = getDataSTD.data.data
+      console.log('getDataSTD.data', getDataSTD.data)
 
       // data.expressType = '01'
       // let signSMD = MD5(`${JSON.stringify(data)}${env.APP_ID}${env.SECURITY_KEY}`)
@@ -66,6 +67,8 @@ class Controller {
             }
           })
         ongkirDlite = getDataDlite.data.data
+      console.log('getDataDlite.data', getDataDlite.data)
+
       }
 
 
