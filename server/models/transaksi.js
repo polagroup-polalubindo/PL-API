@@ -11,6 +11,9 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Transaksi.hasMany(models.Cart);
       Transaksi.hasMany(models.TransaksiKomisi);
+      Transaksi.belongsTo(models.Province, { foreignKey: 'recipientProvinceId' });
+      Transaksi.belongsTo(models.City, { foreignKey: 'recipientCityId' });
+      Transaksi.belongsTo(models.District, { foreignKey: 'recipientDistrictId' });
     }
   }
   Transaksi.init(
@@ -34,6 +37,19 @@ module.exports = (sequelize, DataTypes) => {
       telfonPenerima: DataTypes.STRING,
       referralCode: DataTypes.STRING,
       expiredAt: DataTypes.DATE,
+      tanggalPengiriman: DataTypes.DATE,
+      insurance: DataTypes.BOOLEAN,
+      insuranceFee: DataTypes.INTEGER,
+      recipientProvinceId: DataTypes.INTEGER,
+      recipientCityId: DataTypes.INTEGER,
+      recipientDistrictId: DataTypes.INTEGER,
+      recipientAddress: DataTypes.STRING,
+      recipientZipCode: DataTypes.STRING,
+      orderNo: DataTypes.STRING,
+      itemName: DataTypes.STRING,
+      itemQuantity: DataTypes.INTEGER,
+      weight: DataTypes.STRING,
+      expressType: DataTypes.STRING,
     },
     {
       sequelize,

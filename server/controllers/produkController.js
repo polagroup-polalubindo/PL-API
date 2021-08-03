@@ -169,12 +169,10 @@ class Controller {
 
   static ubahStatus = async (req, res) => {
     const { statusProduk } = req.body;
-    console.log(statusProduk, "<<<<<<<");
     const newData = await Produk.update(
       { statusProduk },
       { where: { id: req.params.id } }
     );
-    console.log(newData);
   };
 
   static deleteProduk = async (req, res) => {

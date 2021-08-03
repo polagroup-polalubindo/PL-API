@@ -14,6 +14,8 @@ module.exports = (sequelize, DataTypes) => {
       Produk.hasMany(models.Cart);
       Produk.hasMany(models.Sertifikasi);
       Produk.hasMany(models.HargaGrosir);
+      Produk.belongsToMany(models.Voucher, { foreignKey: 'productId', through: models.VoucherProduct });
+      // Produk.hasMany(models.Voucher);
     }
   }
   Produk.init(

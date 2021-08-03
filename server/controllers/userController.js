@@ -1,4 +1,4 @@
-const { User, Komisi, TransaksiKomisi, Alamat } = require("../models");
+const { User, Komisi, TransaksiKomisi, Alamat, Province, District, City } = require("../models");
 const { compareHash } = require("../helpers/bcrypt");
 const { generateToken, verifyToken } = require("../helpers/jwt");
 
@@ -34,11 +34,27 @@ class Controller {
       let data = null;
       if (email) {
         console.log("mail");
-        data = await User.findOne({ where: { email } });
+        data = await User.findOne({
+          where: { email }, include: {
+            model: Alamat,
+            include: [
+              { model: Province, attribute: ['id', 'name'] },
+              { model: City, attribute: ['id', 'name'] },
+              { model: District, attribute: ['id', 'name'] }]
+          }
+        });
       }
       if (phone) {
         console.log("phone");
-        data = await User.findOne({ where: { phone } });
+        data = await User.findOne({
+          where: { phone }, include: {
+            model: Alamat,
+            include: [
+              { model: Province, attribute: ['id', 'name'] },
+              { model: City, attribute: ['id', 'name'] },
+              { model: District, attribute: ['id', 'name'] }]
+          }
+        });
       }
       if (data) {
         const validasiPassword = compareHash(password, data.password);
@@ -59,7 +75,15 @@ class Controller {
   static checkToken = async (req, res) => {
     try {
       const decode = await verifyToken(req.headers.access_token);
-      let dataUserLogin = await User.findByPk(decode.id);
+      let dataUserLogin = await User.findByPk(decode.id, {
+        include: {
+          model: Alamat,
+          include: [
+            { model: Province, attribute: ['id', 'name'] },
+            { model: City, attribute: ['id', 'name'] },
+            { model: District, attribute: ['id', 'name'] }]
+        }
+      });
 
       if (dataUserLogin) {
         return res.status(200).json({ data: dataUserLogin });
@@ -90,7 +114,16 @@ class Controller {
   };
 
   static getUserData = async (req, res) => {
-    const data = await User.findOne({ where: { id: req.user.id } });
+    const data = await User.findOne({
+      where: { id: req.user.id },
+      include: {
+        model: Alamat,
+        include: [
+          { model: Province, attribute: ['id', 'name'] },
+          { model: City, attribute: ['id', 'name'] },
+          { model: District, attribute: ['id', 'name'] }]
+      }
+    });
     return res.status(200).json(data);
   };
 
@@ -191,7 +224,6 @@ class Controller {
       { statusPremier, referralStatus: statusPremier === 'aktif' ? 1 : 0 },
       { where: { id } }
     );
-    console.log(updateStatus);
     return res.status(200).json({ message: "success" });
   };
 

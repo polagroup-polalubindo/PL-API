@@ -63,7 +63,7 @@ module.exports = (sequelize, DataTypes) => {
           notEmpty: true,
         },
       },
-      alamat: DataTypes.STRING,
+      // alamat: DataTypes.STRING,
       role: DataTypes.STRING,
       referral: DataTypes.STRING,
       referralStatus: DataTypes.BOOLEAN,
@@ -117,7 +117,6 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   User.afterUpdate((user, option) => {
-    console.log("after edit");
     const salt = genSaltSync(10);
     user.password = bycrpt.hashSync(user.password, salt);
   });

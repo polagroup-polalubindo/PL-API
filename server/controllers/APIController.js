@@ -1,65 +1,97 @@
-const axios = require("axios");
+const MD5 = require('md5');
+const Axios = require('axios');
+const querystring = require('querystring')
 
-axios.defaults.baseURL = "https://api.rajaongkir.com/starter";
-axios.defaults.headers.common["key"] = process.env.APIKEY_RAJAONGKIR;
-axios.defaults.headers.post["Content-Type"] =
-  "application/x-www-form-urlencoded";
+const API = Axios.create({
+  baseURL: 'http://e-oms.idexpress.com',
+});
 
 class Controller {
   static getCost = async (req, res) => {
-    const { destination, weight, courier } = req.body;
     try {
-      const {
-        data: { rajaongkir },
-      } = await axios.post("/cost", {
-        origin: "152",
-        destination,
-        weight,
-        courier,
+      let ongkirSTD = 0, ongkirSMD = 0, ongkirDlite = 0, ongkirDtruck
+      let data = { ...req.query }
+
+      data.expressType = '00'
+      let signSTD = MD5(`${JSON.stringify(data)}${process.env.APP_ID}${process.env.SECURITY_KEY}`)
+
+      let newDataSTD = {
+        data: JSON.stringify(data),
+        appId: process.env.APP_ID,
+        sign: signSTD
+      }
+
+      let getDataSTD = await API.post('/open/v1/waybill/get-standard-fee',
+        querystring.stringify(newDataSTD),
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+          }
+        })
+      ongkirSTD = getDataSTD.data.data
+
+      // data.expressType = '01'
+      // let signSMD = MD5(`${JSON.stringify(data)}${env.APP_ID}${env.SECURITY_KEY}`)
+
+      // let newDataSMD = {
+      //   data: JSON.stringify(data),
+      //   appId: 100132,
+      //   sign: signSMD
+      // }
+
+      // let getDataSMD = await API.post('/open/v1/waybill/get-standard-fee',
+      //   querystring.stringify(newDataSMD),
+      //   {
+      //     headers: {
+      //       "Content-Type": "application/x-www-form-urlencoded"
+      //     }
+      //   })
+      // ongkirSMD = getDataSMD.data.data
+
+      if (data.weight <= 0.51) {
+        data.expressType = '03'
+        let signDlite = MD5(`${JSON.stringify(data)}${process.env.APP_ID}${process.env.SECURITY_KEY}`)
+
+        let newDataDlite = {
+          data: JSON.stringify(data),
+          appId: process.env.APP_ID,
+          sign: signDlite
+        }
+
+        let getDataDlite = await API.post('/open/v1/waybill/get-standard-fee',
+          querystring.stringify(newDataDlite),
+          {
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded"
+            }
+          })
+        ongkirDlite = getDataDlite.data.data
+      }
+
+
+      return res.status(200).json({
+        data:
+          [
+            { type: 'Standar', cost: +ongkirSTD, code: '00' },
+            // { type: 'Same Day', cost: +ongkirSMD, code: '01' },
+            { type: 'Dlite', cost: +ongkirDlite, code: '03' }]
       });
-      return res.status(200).json(rajaongkir);
-    } catch (error) {
-      return res.status(400).json(error);
-    }
-  };
 
-  static getTotalCost = async (req, res) => {
-    try {
-      const { weight, courier, destination } = req.params;
-      const { data } = await axios.get(`/city`);
-      const filtered = data.rajaongkir.results.filter(
-        (el) => el.city_name.toLowerCase() === destination.toLowerCase()
-      );
-      const {
-        data: { rajaongkir },
-      } = await axios.post("/cost", {
-        origin: "152",
-        destination: filtered[0].city_id,
-        weight,
-        courier,
-      });
-      return res.status(200).json(rajaongkir.results[0].costs);
     } catch (error) {
       return res.status(400).json(error);
     }
-  };
 
-  static getCity = async (req, res) => {
-    try {
-      const { data } = await axios.get(`/city`);
-      return res.status(200).json(data.rajaongkir.results);
-    } catch (error) {
-      return res.status(400).json(error);
-    }
-  };
+    // const { destination, weight, courier } = req.query;
+    //   const {
+    //     data: { rajaongkir },
+    //   } = await axios.post("/cost", {
+    //     origin: "152",
+    //     destination,
+    //     weight,
+    //     courier,
+    //   });
+    //   return res.status(200).json(rajaongkir);
 
-  static getProvince = async (req, res) => {
-    try {
-      const { data } = await axios.get("/province");
-      return res.status(200).json(data);
-    } catch (error) {
-      return res.status(400).json(error);
-    }
   };
 }
 

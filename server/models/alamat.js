@@ -10,15 +10,22 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Alamat.belongsTo(models.User);
+      Alamat.belongsTo(models.Province, {foreignKey: 'provinsiId'});
+      Alamat.belongsTo(models.City, {foreignKey: 'kotaId'});
+      Alamat.belongsTo(models.District, {foreignKey: 'kecamatanId'});
     }
   }
   Alamat.init(
     {
-      kecamatan: DataTypes.STRING,
+      kecamatanId: DataTypes.INTEGER,
+      kotaId: DataTypes.INTEGER,
+      provinsiId: DataTypes.INTEGER,
       kelurahan: DataTypes.STRING,
       alamat: DataTypes.STRING,
+      detail: DataTypes.STRING,
       kodepos: DataTypes.STRING,
       userId: DataTypes.INTEGER,
+      keterangan: DataTypes.STRING
     },
     {
       sequelize,

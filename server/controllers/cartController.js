@@ -9,7 +9,7 @@ const {
 const { generateToken } = require("../helpers/jwt");
 const { verifyToken } = require("../helpers/jwt");
 const { transporter, checkOutMail } = require("../helpers/mailer");
-const cronJob = require("cron").CronJob;
+const { scheduleCancelExpiredTransaction } = require('../helpers/scheduler')
 
 class Controller {
   static getCart = async (req, res) => {
@@ -70,6 +70,7 @@ class Controller {
       }
 
       transaksiData.invoice = `INV/${new Date().getFullYear()}${month}${date}/VK/${newNumberString}`
+      transaksiData.orderNo = `IDVK${new Date().getFullYear()}${month}${date}${newNumberString}`
 
       const { id } = await Transaksi.create(transaksiData);
       const promiseQuery = [];
@@ -84,29 +85,7 @@ class Controller {
       const carts = await Cart.bulkCreate(value);
       res.status(201).json({ access_token, transaksiId: id });
 
-      if (transaksiData.expiredAt) {
-        // console.log("Cron", new Date(new Date().setSeconds(new Date().getSeconds() + 10)))
-
-        var job = new cronJob(new Date(transaksiData.expiredAt), async function () {
-          const dataSelected = await Transaksi.findByPk(id)
-
-          if (dataSelected.expiredAt) {
-            await Transaksi.update(
-              {
-                expiredAt: null,
-                statusPesanan: 'dibatalkan',
-                statusPembayaran: 'dibatalkan',
-                statusPengiriman: 'dibatalkan',
-              },
-              {
-                where: { id }
-              }
-            )
-            console.log("SUKSES CRON")
-          }
-        });
-        job.start();
-      }
+      scheduleCancelExpiredTransaction(id)
     } catch (error) {
       console.log(error);
       error.name === "SequelizeValidationError"

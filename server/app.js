@@ -6,6 +6,7 @@ const port = process.env.PORT;
 const router = require("./router");
 const path = require("path");
 const morgan = require('morgan')
+const { rescheduleCRON } = require('./helpers/scheduler')
 // const cronJob = require("cron").CronJob;
 
 app.use(express.urlencoded({ extended: true }));
@@ -17,6 +18,7 @@ app.use("/", express.static(path.join(__dirname, "/")));
 app.use(router);
 
 app.listen(port, () => {
+  rescheduleCRON()
   // var job = new cronJob(new Date(new Date().setSeconds(new Date().getSeconds() +10)), function() {
   //   console.log(new Date(new Date().setSeconds(new Date().getSeconds() +10)));
   // }, null, true, 'America/Los_Angeles');

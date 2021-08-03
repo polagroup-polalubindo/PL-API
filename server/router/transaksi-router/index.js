@@ -49,6 +49,13 @@ transaksi.post(
   controller.updateResi
 );
 
+transaksi.get(
+  `/kirim-pesanan/:id`,
+  authentication,
+  authorization,
+  controller.kirimPesanan
+);
+
 transaksi.post(
   "/ubah-status-pembayaran",
   authentication,

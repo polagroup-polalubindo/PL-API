@@ -134,6 +134,7 @@ class Controller {
       totalHarga,
       ongkosKirim,
       referralCode,
+      insuranceFee
     } = req.body;
 
     // if (referralCode !== null) {
@@ -180,7 +181,7 @@ class Controller {
     );
 
     const customerData = await User.findOne({ where: { id: Carts[0].userId } });
-    customerData.totalPembelian += totalHarga - ongkosKirim;
+    customerData.totalPembelian += totalHarga - ongkosKirim - insuranceFee;
     const update = await User.update(
       { totalPembelian: customerData.totalPembelian },
       {
@@ -265,14 +266,41 @@ class Controller {
     return res.status(200).json({ message: "success" });
   };
 
+  static kirimPesanan = async (req, res) => {
+    let hoursNow = new Date().getHours(), minuteNow = new Date().getMinutes()
+    let tanggalKirim
+
+    if (new Date().getDay() === 6) { // PESANAN HARI SABTU
+      tanggalKirim = new Date(new Date().setDate(new Date().getDate() + 2))
+    } else if (new Date().getDay() === 0) { // PESANAN HARI MINGGU
+      tanggalKirim = new Date(new Date().setDate(new Date().getDate() + 1))
+    } else { //PESANAN HARI SENIN - JUMAT
+      if (hoursNow < 14 || (hoursNow === 14 && minuteNow <= 15)) {
+        tanggalKirim = new Date()
+      }
+      else { // JIKA PESANAN LEBIH DARI JAM 14:15
+        if (new Date(new Date().setDate(new Date().getDate() + 1)).getDay() === 6)
+          tanggalKirim = new Date(new Date().setDate(new Date().getDate() + 3))
+        else if (new Date(new Date().setDate(new Date().getDate() + 1)).getDay() === 0)
+          tanggalKirim = new Date(new Date().setDate(new Date().getDate() + 2))
+        else tanggalKirim = new Date(new Date().setDate(new Date().getDate() + 1))
+      }
+    }
+
+    await Transaksi.update(
+      { tanggalPengiriman: tanggalKirim },
+      { where: { id: req.params.id } }
+    );
+    return res.status(200).json({ message: "success" });
+  };
+
+
   static ubahStatusPembayaran = async (req, res) => {
     const { statusPembayaran, id } = req.body;
-    console.log(statusPembayaran, id);
     const transaksi = await Transaksi.update(
       { statusPembayaran },
       { where: { id } }
     );
-    console.log(transaksi);
     return res.status(200).json({ messsage: "success" });
   };
 
