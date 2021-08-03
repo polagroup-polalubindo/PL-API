@@ -12,6 +12,9 @@ class Controller {
       let ongkirSTD = 0, ongkirSMD = 0, ongkirDlite = 0, ongkirDtruck
       let data = { ...req.query }
 console.log(data)
+
+console.log(process.env.APP_ID)
+console.log(process.env.SECURITY_KEY)
       data.expressType = '00'
       let signSTD = MD5(`${JSON.stringify(data)}${process.env.APP_ID}${process.env.SECURITY_KEY}`)
 
