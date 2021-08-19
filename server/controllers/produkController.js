@@ -11,7 +11,7 @@ class Controller {
       } = req.query
 
       let allProduk, totalProduk
-      if (page) {
+      if (limit) {
         let offset = +page, condition = {}, query = {}
         if (offset > 0) offset = offset * +limit
         query = { offset, limit: +limit }
