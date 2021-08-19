@@ -8,6 +8,7 @@ const transaksiKomisi = require("./transaksiKomisi-router");
 const komisi = require("./komisi-router");
 const api = require("./api-router");
 const alamat = require("./alamat-router");
+const voucher = require("./voucher-router");
 const area = require("./area-router");
 
 router.use(user);
@@ -20,5 +21,6 @@ router.use(komisi);
 router.use(api);
 router.use(alamat);
 router.use(area);
+router.use(voucher);
 
 module.exports = router;

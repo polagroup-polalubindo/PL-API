@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Voucher extends Model {
     /**
@@ -11,24 +9,32 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Voucher.belongsToMany(models.Produk, { foreignKey: 'voucherId', through: models.VoucherProduct });
-      Voucher.hasMany(models.VoucherProduct, { foreignKey: 'voucherId' });
+      Voucher.belongsToMany(models.Produk, {
+        foreignKey: "voucherId",
+        through: models.VoucherProduct,
+      });
+      Voucher.hasMany(models.VoucherProduct, {
+        foreignKey: "voucherId",
+      });
       // Voucher.hasMany(models.Produk);
     }
-  };
-  Voucher.init({
-    name: DataTypes.STRING,
-    code: DataTypes.STRING,
-    periodeStart: DataTypes.DATE,
-    periodeEnd: DataTypes.DATE,
-    typeVoucher: DataTypes.STRING,
-    discountMax: DataTypes.INTEGER,
-    minimumPurchase: DataTypes.INTEGER,
-    usageQuota: DataTypes.INTEGER,
-    forAll: DataTypes.BOOLEAN
-  }, {
-    sequelize,
-    modelName: 'Voucher',
-  });
+  }
+  Voucher.init(
+    {
+      name: DataTypes.STRING,
+      code: DataTypes.STRING,
+      periodeStart: DataTypes.DATE,
+      periodeEnd: DataTypes.DATE,
+      typeVoucher: DataTypes.STRING,
+      discountMax: DataTypes.INTEGER,
+      minimumPurchase: DataTypes.INTEGER,
+      usageQuota: DataTypes.INTEGER,
+      forAll: DataTypes.BOOLEAN,
+    },
+    {
+      sequelize,
+      modelName: "Voucher",
+    }
+  );
   return Voucher;
 };
