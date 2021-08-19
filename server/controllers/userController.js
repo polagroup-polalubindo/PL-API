@@ -1,6 +1,7 @@
 const { User, Komisi, TransaksiKomisi, Alamat, Province, District, City } = require("../models");
 const { compareHash } = require("../helpers/bcrypt");
 const { generateToken, verifyToken } = require("../helpers/jwt");
+const { Op } = require('sequelize')
 
 class Controller {
   // Customer
@@ -23,8 +24,8 @@ class Controller {
       });
     } catch (error) {
       error.name === "SequelizeValidationError"
-        ? res.status(400).json({ errMessage: error.errors[0].message })
-        : res.status(400).json(error);
+        ? res.status(500).json({ errMessage: error.errors[0].message })
+        : res.status(500).json(error);
     }
   };
 
@@ -68,7 +69,7 @@ class Controller {
         throw { message: `invalid email/password` };
       }
     } catch (error) {
-      return res.status(400).json(error);
+      return res.status(500).json(error);
     }
   };
 
@@ -92,7 +93,7 @@ class Controller {
       }
     } catch (error) {
       console.log(error)
-      return res.status(400).json(error);
+      return res.status(500).json(error);
     }
   };
 
@@ -109,7 +110,7 @@ class Controller {
       });
       return res.status(200).json(dataCustomer);
     } catch (error) {
-      return res.status(400).json(error);
+      return res.status(500).json(error);
     }
   };
 
@@ -136,7 +137,7 @@ class Controller {
       );
       return res.status(200).json({ message: "success" });
     } catch (error) {
-      return res.status(400).json(error);
+      return res.status(500).json(error);
     }
   };
 
@@ -152,14 +153,45 @@ class Controller {
   // CMS
 
   static getAllCustomer = async (req, res) => {
-    const data = await User.findAll({
-      where: { role: 'customer' },
-      include: {
-        model: Komisi,
-        include: { model: TransaksiKomisi, include: User },
-      },
-    });
-    return res.status(200).json(data);
+    try {
+      let {
+        page,
+        limit,
+        keyword
+      } = req.query
+      let query = {}, condition = {}
+
+      if (limit) {
+        let offset = +page
+        if (offset > 0) offset = offset * +limit
+        query = { offset, limit: +limit }
+      }
+      if (keyword) condition = {
+        [Op.or]: [
+          { email: { [Op.substring]: keyword } },
+          { phone: { [Op.substring]: keyword } },
+          { nama: { [Op.substring]: keyword } },
+        ]
+      }
+
+      const data = await User.findAll({
+        where: { role: 'customer', ...condition },
+        include: {
+          model: Komisi,
+          include: { model: TransaksiKomisi, include: User },
+        },
+        ...query
+      });
+
+      const getAllData = await User.findAll({
+        where: { role: 'customer', ...condition },
+      });
+
+      return res.status(200).json({ data, totalMember: getAllData.length });
+    } catch (err) {
+      console.log(err)
+      res.status(500).json(err)
+    }
   };
 
   static addCustomer = async (req, res) => {
@@ -202,8 +234,8 @@ class Controller {
       });
     } catch (error) {
       error.name === "SequelizeValidationError"
-        ? res.status(400).json({ errMessage: error.errors[0].message })
-        : res.status(400).json(error);
+        ? res.status(500).json({ errMessage: error.errors[0].message })
+        : res.status(500).json(error);
     }
   };
 
@@ -214,7 +246,7 @@ class Controller {
       });
       return res.status(200).json(customer.dataValues);
     } catch (error) {
-      return res.status(400).json(error);
+      return res.status(500).json(error);
     }
   };
 
@@ -246,7 +278,7 @@ class Controller {
       );
       return res.status(200).json({ message: `edit complete` });
     } catch (error) {
-      res.status(400).json(error);
+      res.status(500).json(error);
     }
   };
 
@@ -257,7 +289,7 @@ class Controller {
       });
       return res.status(200).json({ message: `success deleting account` });
     } catch (error) {
-      return res.status(400).json(error);
+      return res.status(500).json(error);
     }
   };
 }

@@ -6,7 +6,7 @@ const cart = require("./cart-router");
 const transaksi = require("./transaksi-router");
 const transaksiKomisi = require("./transaksiKomisi-router");
 const komisi = require("./komisi-router");
-const ongkir = require("./ongkir-router");
+const api = require("./api-router");
 const alamat = require("./alamat-router");
 const area = require("./area-router");
 
@@ -17,7 +17,7 @@ router.use(cart);
 router.use(transaksi);
 router.use(transaksiKomisi);
 router.use(komisi);
-router.use(ongkir);
+router.use(api);
 router.use(alamat);
 router.use(area);
 

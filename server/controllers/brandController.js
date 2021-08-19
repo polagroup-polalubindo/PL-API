@@ -6,7 +6,7 @@ class Controller {
       const brandList = await Brand.findAll();
       return res.status(200).json(brandList);
     } catch (error) {
-      return res.status(400).json(error);
+      return res.status(500).json(error);
     }
   };
 
@@ -16,7 +16,7 @@ class Controller {
       const newBrand = await Brand.create({ namaBrand, fotoBrand });
       return res.status(201).json(newBrand);
     } catch (error) {
-      return res.status(400).json(error);
+      return res.status(500).json(error);
     }
   };
 
@@ -25,7 +25,7 @@ class Controller {
       const data = await Brand.findOne({ where: { id: req.params.brandId } });
       return res.status(200).json(data);
     } catch (error) {
-      return res.status(400).json(error);
+      return res.status(500).json(error);
     }
   };
 
@@ -38,7 +38,7 @@ class Controller {
       );
       return res.status(200).json({ message: `success editing brand` });
     } catch (error) {
-      return res.status(400).json(error);
+      return res.status(500).json(error);
     }
   };
 
@@ -49,7 +49,7 @@ class Controller {
       });
       return res.status(200).json({ message: `success deleting brand` });
     } catch (error) {
-      return res.status(400).json(error);
+      return res.status(500).json(error);
     }
   };
 
@@ -61,7 +61,7 @@ class Controller {
       });
       return res.status(200).json(ProductList);
     } catch (error) {
-      return res.status(400).json(error);
+      return res.status(500).json(error);
     }
   };
 }

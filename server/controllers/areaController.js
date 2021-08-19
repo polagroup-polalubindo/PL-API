@@ -3,7 +3,7 @@ const { Province, City, District } = require("../models");
 class Controller {
   static getAllProvince = async (req, res) => {
     const data = await Province.findAll({ attributes: ['id', 'name'] });
-    return res.status(201).json({ status: "success", totalData: data.length, data });
+    return res.status(200).json({ status: "success", totalData: data.length, data });
   };
 
   static getAllCity = async (req, res) => {
@@ -12,7 +12,7 @@ class Controller {
       query = { provinceId }
     }
     const data = await City.findAll({ where: query, attributes: ['id', 'name', 'provinceId'] });
-    return res.status(201).json({ status: "success", totalData: data.length, data });
+    return res.status(200).json({ status: "success", totalData: data.length, data });
   };
 
   static getAllDistrict = async (req, res) => {
@@ -21,7 +21,7 @@ class Controller {
       query = { cityId }
     }
     const data = await District.findAll({ where: query, attributes: ['id', 'name', 'cityId'] });
-    return res.status(201).json({ status: "success", totalData: data.length, data });
+    return res.status(200).json({ status: "success", totalData: data.length, data });
   };
 }
 

@@ -4,16 +4,31 @@ const baseUrl = `http://157.230.248.17/`;
 class Controller {
   static getAll = async (req, res) => {
     try {
-      let allProduk
-      if (req.query.all) {
-        allProduk = await Produk.findAll({ include: [Brand, HargaGrosir, Sertifikasi] });
+      let {
+        page,
+        limit,
+        status
+      } = req.query
+
+      let allProduk, totalProduk
+      if (page) {
+        let offset = +page, condition = {}, query = {}
+        if (offset > 0) offset = offset * +limit
+        query = { offset, limit: +limit }
+        if (status) condition = { statusProduk: status }
+
+        allProduk = await Produk.findAll({ where: condition, include: [Brand, HargaGrosir, Sertifikasi], ...query, order: [['id', 'DESC']] });
+        let getAllProduk = await Produk.findAll({ where: condition });
+        totalProduk = getAllProduk.length
       } else {
         allProduk = await Produk.findAll({ where: { statusProduk: 1 }, include: Brand });
+        totalProduk = allProduk.length
       }
 
-      return res.status(200).json(allProduk);
+      return res.status(200).json({ data: allProduk, totalProduk });
     } catch (error) {
-      return res.status(400).json(error);
+      console.log(error)
+      return res.status(500).json(error);
     }
   };
 
@@ -69,7 +84,7 @@ class Controller {
 
       return res.status(201).json(addProduk);
     } catch (error) {
-      return res.status(400).json(error);
+      return res.status(500).json(error);
     }
   };
 
@@ -80,7 +95,7 @@ class Controller {
       });
       return res.status(200).json(oneProduk);
     } catch (error) {
-      return res.status(400).json(error);
+      return res.status(500).json(error);
     }
   };
 
@@ -163,7 +178,7 @@ class Controller {
 
       return res.status(200).json(editedProduk);
     } catch (error) {
-      return res.status(400).json(error);
+      return res.status(500).json(error);
     }
   };
 
@@ -182,7 +197,7 @@ class Controller {
       });
       return res.status(200).json({ message: `produk deleted` });
     } catch (error) {
-      return res.status(400).json(error);
+      return res.status(500).json(error);
     }
   };
 }

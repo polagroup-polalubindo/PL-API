@@ -2,7 +2,8 @@ const { Voucher, Produk, VoucherProduct } = require("../models");
 
 class Controller {
   static tambahVoucher = async (req, res) => {
-    const { name,
+    const {
+      name,
       code,
       periodeStart,
       periodeEnd,
@@ -27,16 +28,17 @@ class Controller {
     })
 
     if (!forAll && Array.isArray(listProduct) && listProduct.length > 0) {
-      listProduct.forEach(element => {
+      listProduct.forEach(async (element) => {
         await VoucherProduct.create({ voucerId: data.id, productId: element.id })
       });
     }
-    const data = await Voucher.findOne({ include: { model: VoucherProduct, include: Produk } });
-    return res.status(201).json({ status: "success", data });
+    const newData = await Voucher.findOne({ include: { model: VoucherProduct, include: Produk } });
+    return res.status(201).json({ status: "success", data: newData });
   };
 
   static editVoucher = async (req, res) => {
-    const { name,
+    const {
+      name,
       code,
       periodeStart,
       periodeEnd,
@@ -63,13 +65,13 @@ class Controller {
     if (!forAll && Array.isArray(listProduct) && listProduct.length > 0) {
       let allVoucherProduk = await VoucherProduct.findAll({ where: { voucerId: req.params.id } })
 
-      allVoucherProduk.forEach(el => {
+      allVoucherProduk.forEach(async (el) => {
         let isAvaiable = listProduct.find(element => element.id === el.productId)
 
         if (!isAvaiable) await VoucherProduct.destroy({ where: { id: isAvaiable.id } })
       })
 
-      listProduct.forEach(el => {
+      listProduct.forEach(async (el) => {
         let isAvaiable = allVoucherProduk.find(element => element.productId === el.id)
 
         if (!isAvaiable) await VoucherProduct.create({ voucerId: req.params.id, productId: element.id })
@@ -78,25 +80,25 @@ class Controller {
       await VoucherProduct.destroy({ where: { voucerId: req.params.id } })
     }
 
-    const data = await Voucher.findOne({ include: { model: VoucherProduct, include: Produk } });
-    return res.status(201).json({ status: "success", data });
+    const newData = await Voucher.findOne({ include: { model: VoucherProduct, include: Produk } });
+    return res.status(200).json({ status: "success", data: newData});
   };
 
   static deleteVoucher = async (req, res) => {
     await Voucher.destroy({ where: { id: req.params.id } })
     await VoucherProduct.destroy({ where: { voucerId: req.params.id } })
 
-    return res.status(201).json({ status: "success", id_deleted: req.params.id });
+    return res.status(200).json({ status: "success", id_deleted: req.params.id });
   };
 
   static getAllVoucher = async (req, res) => {
     const data = await Voucher.findAll({ include: { model: VoucherProduct, include: Produk } });
-    return res.status(201).json({ status: "success", data });
+    return res.status(200).json({ status: "success", data });
   };
 
   static getOneVoucher = async (req, res) => {
     const data = await Voucher.findByPk(req.params.id, { include: { model: VoucherProduct, include: Produk } });
-    return res.status(201).json({ status: "success", data });
+    return res.status(200).json({ status: "success", data });
   };
 }
 

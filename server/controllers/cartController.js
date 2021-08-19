@@ -20,7 +20,7 @@ class Controller {
       });
       return res.status(200).json(shoppingCart);
     } catch (error) {
-      return res.status(400).json(error);
+      return res.status(500).json(error);
     }
   };
 
@@ -89,8 +89,8 @@ class Controller {
     } catch (error) {
       console.log(error);
       error.name === "SequelizeValidationError"
-        ? res.status(400).json({ errMessage: error.errors[0].message })
-        : res.status(400).json(error);
+        ? res.status(500).json({ errMessage: error.errors[0].message })
+        : res.status(500).json(error);
     }
   };
 
@@ -140,7 +140,7 @@ class Controller {
       );
       return res.status(200).json({ message: `payment confirmed` });
     } catch (error) {
-      return res.status(400).json({ errMessage: error.errors });
+      return res.status(500).json({ errMessage: error.errors });
     }
   };
 }

@@ -13,7 +13,7 @@ const authentication = async (req, res, next) => {
       throw { message: `doesnt recognize user` };
     }
   } catch (error) {
-    console.log(error);
+    return res.status(401).json(error);
   }
 };
 

@@ -26,7 +26,7 @@ class Controller {
       return res.status(200).json(allTransaksi);
     } catch (error) {
       console.log(error);
-      return res.status(400).json(error);
+      return res.status(500).json(error);
     }
   };
 
@@ -67,7 +67,7 @@ class Controller {
       return res.status(200).json(allTransaksi);
     } catch (error) {
       console.log(error);
-      return res.status(400).json(error);
+      return res.status(500).json(error);
     }
   };
 
@@ -108,20 +108,83 @@ class Controller {
       );
       return res.status(200).json({ message: `success editing transaksi` });
     } catch (error) {
-      return res.status(400).json(error);
+      return res.status(500).json(error);
     }
   };
 
   // CMS
 
   static getAllTransaksi = async (req, res) => {
+    let {
+      page,
+      limit,
+      keyword,
+      statusPesanan,
+      statusPengiriman,
+      range,
+      date,
+      status
+    } = req.query, condition = {}, query = {}
+
+    if (limit) {
+      let offset = +page
+      if (offset > 0) offset = offset * +limit
+      query = { offset, limit: +limit }
+    }
+    if (keyword) condition = {
+      [Op.or]: [
+        { invoice: { [Op.substring]: keyword } },
+        { noResi: { [Op.substring]: keyword } },
+        { namaPenerima: { [Op.substring]: keyword } },
+      ]
+    }
+
+    if (statusPesanan) condition.statusPesanan = statusPesanan
+    if (statusPengiriman) condition.statusPengiriman = statusPengiriman
+
+    if (range === 'hari') {
+      condition.createdAt = date
+    } else if (range === 'minggu') {
+      let day = new Date(date).getDay() === 0 ? 7 : new Date(date).getDay()
+      let dateMonday = new Date(date).getDate() - (day - 1)
+      let dateSunday = dateMonday + 6
+      condition.createdAt = {
+        [Op.and]: {
+          [Op.gte]: new Date(new Date(date).getFullYear(), new Date(date).getMonth(), dateMonday),
+          [Op.lte]: new Date(new Date(date).getFullYear(), new Date(date).getMonth(), dateSunday)
+        }
+      }
+    } else if (range === 'bulan') {
+      condition.createdAt = {
+        [Op.and]: {
+          [Op.gte]: new Date(`${new Date(date).getFullYear()}-${new Date(date).getMonth() + 1 < 10 ? `0${new Date(date).getMonth() + 1}` : new Date(date).getMonth() + 1}-01`),
+          [Op.lt]: new Date(`${new Date(date).getFullYear()}-${new Date(date).getMonth() + 2 < 10 ? `0${new Date(date).getMonth() + 2}` : new Date(date).getMonth() + 2}-01`)
+        }
+      }
+    } else if (range === 'tahun') {
+      condition.createdAt = {
+        [Op.and]: {
+          [Op.gte]: new Date(`${new Date(date).getFullYear()}-01-01`),
+          [Op.lt]: new Date(`${new Date(date).getFullYear() + 1}-01-01`)
+        }
+      }
+    }
+
+    if (status) condition.statusPembayaran = status
+
     const data = await Transaksi.findAll({
+      where: condition,
       include: { model: Cart, include: [Produk, User] },
       order: [
         ['createdAt', 'DESC']
-      ]
+      ],
+      ...query
     });
-    return res.status(200).json(data);
+
+    const getAllData = await Transaksi.findAll({
+      where: condition
+    });
+    return res.status(200).json({ data: data, totalTransaksi: getAllData.length });
   };
 
   static konfirmasiTransaksi = async (req, res) => {
