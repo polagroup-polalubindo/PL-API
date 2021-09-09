@@ -5,6 +5,7 @@ const {
   Transaksi,
   TransaksiKomisi,
   Komisi,
+  Voucher
 } = require("../models");
 const { generateToken } = require("../helpers/jwt");
 const { verifyToken } = require("../helpers/jwt");
@@ -83,6 +84,20 @@ class Controller {
       });
       const updateProduk = await Promise.all(promiseQuery);
       const carts = await Cart.bulkCreate(value);
+
+      if (transaksiData.voucher1) {
+        let voucherSelected = await Voucher.findOne({ where: { id: transaksiData.voucher1, isUnlimited: 0 } })
+
+        await Voucher.update({ usageQuota: +voucherSelected.usageQuota - 1 }, { where: { id: voucherSelected.id } })
+      }
+
+      if (transaksiData.voucher2) {
+        let voucherSelected = await Voucher.findOne({ where: { id: transaksiData.voucher2, isUnlimited: 0 } })
+
+        await Voucher.update({ usageQuota: +voucherSelected.usageQuota - 1 }, { where: { id: voucherSelected.id } })
+      }
+
+
       res.status(201).json({ access_token, transaksiId: id });
 
       scheduleCancelExpiredTransaction(id)

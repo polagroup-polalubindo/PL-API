@@ -51,27 +51,27 @@ class Controller {
       //   })
       // ongkirSMD = getDataSMD.data.data
 
-      if (data.weight <= 0.51) {
-        data.expressType = '03'
-        let signDlite = MD5(`${JSON.stringify(data)}${process.env.APP_ID}${process.env.SECURITY_KEY}`)
+      // if (data.weight <= 0.51) {
+      //   data.expressType = '03'
+      //   let signDlite = MD5(`${JSON.stringify(data)}${process.env.APP_ID}${process.env.SECURITY_KEY}`)
 
-        let newDataDlite = {
-          data: JSON.stringify(data),
-          appId: process.env.APP_ID,
-          sign: signDlite
-        }
+      //   let newDataDlite = {
+      //     data: JSON.stringify(data),
+      //     appId: process.env.APP_ID,
+      //     sign: signDlite
+      //   }
 
-        let getDataDlite = await API.post('/open/v1/waybill/get-standard-fee',
-          querystring.stringify(newDataDlite),
-          {
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded"
-            }
-          })
-        ongkirDlite = getDataDlite.data.data
-        console.log('getDataDlite.data', getDataDlite.data)
+      //   let getDataDlite = await API.post('/open/v1/waybill/get-standard-fee',
+      //     querystring.stringify(newDataDlite),
+      //     {
+      //       headers: {
+      //         "Content-Type": "application/x-www-form-urlencoded"
+      //       }
+      //     })
+      //   ongkirDlite = getDataDlite.data.data
+      //   console.log('getDataDlite.data', getDataDlite.data)
 
-      }
+      // }
 
 
       return res.status(200).json({
@@ -79,7 +79,8 @@ class Controller {
           [
             { type: 'Standar', cost: +ongkirSTD, code: '00' },
             // { type: 'Same Day', cost: +ongkirSMD, code: '01' },
-            { type: 'Dlite', cost: +ongkirDlite, code: '03' }]
+            // { type: 'Dlite', cost: +ongkirDlite, code: '03' }
+          ]
       });
 
     } catch (error) {

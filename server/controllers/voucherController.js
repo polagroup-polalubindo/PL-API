@@ -3,61 +3,8 @@ const Op = require('sequelize').Op
 
 class Controller {
   static tambahVoucher = async (req, res) => {
-    const {
-      name,
-      code,
-      periodeStart,
-      periodeEnd,
-      typeVoucher,
-      discountMax,
-      minimumPurchase,
-      usageQuota,
-      forAll,
-      listProduct,
-    } = req.body;
-
-    let data = await Voucher.create({
-      name,
-      code,
-      periodeStart,
-      periodeEnd,
-      typeVoucher,
-      discountMax,
-      minimumPurchase,
-      usageQuota,
-      forAll,
-    });
-
-    if (!forAll && Array.isArray(listProduct) && listProduct.length > 0) {
-      listProduct.forEach(async (element) => {
-        await VoucherProduct.create({
-          voucherId: data.id,
-          productId: element.id,
-        });
-      });
-    }
-    const getOne = await Voucher.findOne({
-      include: { model: VoucherProduct, include: Produk },
-    });
-    return res.status(201).json({ status: "success", getOne });
-  };
-
-  static editVoucher = async (req, res) => {
-    const {
-      name,
-      code,
-      periodeStart,
-      periodeEnd,
-      typeVoucher,
-      discountMax,
-      minimumPurchase,
-      usageQuota,
-      forAll,
-      listProduct,
-    } = req.body;
-
-    let data = await Voucher.update(
-      {
+    try {
+      const {
         name,
         code,
         periodeStart,
@@ -67,43 +14,145 @@ class Controller {
         minimumPurchase,
         usageQuota,
         forAll,
-      },
-      { where: { id: req.params.id } }
-    );
+        listProduct,
+        nominal,
+        keterangan,
+        canCombine,
+        isUnlimited,
+      } = req.body;
 
-    if (!forAll && Array.isArray(listProduct) && listProduct.length > 0) {
-      let allVoucherProduk = await VoucherProduct.findAll({
-        where: { voucerId: req.params.id },
-      });
+      let checkVoucher = await Voucher.findOne({ where: { code } })
 
-      allVoucherProduk.forEach(async (el) => {
-        let isAvaiable = listProduct.find(
-          (element) => element.id === el.productId
-        );
+      if (checkVoucher) {
+        throw { message: 'Code Voucher Existing' }
+      } else {
+        let data = await Voucher.create({
+          banner: req.file ? req.file.path : null,
+          name,
+          code,
+          periodeStart,
+          periodeEnd,
+          typeVoucher,
+          discountMax,
+          minimumPurchase,
+          usageQuota,
+          forAll,
+          nominal,
+          keterangan,
+          canCombine,
+          isUnlimited,
+        });
 
-        if (!isAvaiable)
-          await VoucherProduct.destroy({ where: { id: isAvaiable.id } });
-      });
-
-      listProduct.forEach(async (el) => {
-        let isAvaiable = allVoucherProduk.find(
-          (element) => element.productId === el.id
-        );
-
-        if (!isAvaiable)
-          await VoucherProduct.create({
-            voucerId: req.params.id,
-            productId: element.id,
-          });
-      });
-    } else if (forAll) {
-      await VoucherProduct.destroy({ where: { voucerId: req.params.id } });
+        if (forAll === 'false') {
+          let newListProduct = JSON.parse(listProduct)
+          if (Array.isArray(newListProduct) && newListProduct.length > 0) {
+            newListProduct.forEach(async (element) => {
+              await VoucherProduct.create({
+                voucherId: data.id,
+                productId: element.id,
+              });
+            });
+          }
+        }
+        const getOne = await Voucher.findOne({
+          include: { model: VoucherProduct, include: Produk },
+        });
+        return res.status(201).json({ status: "success", getOne });
+      }
+    } catch (err) {
+      console.log(err)
+      res.status(500).json(err)
     }
+  };
 
-    const getOne = await Voucher.findOne({
-      include: { model: VoucherProduct, include: Produk },
-    });
-    return res.status(201).json({ status: "success", getOne });
+  static editVoucher = async (req, res) => {
+    try {
+      const {
+        name,
+        code,
+        periodeStart,
+        periodeEnd,
+        typeVoucher,
+        discountMax,
+        minimumPurchase,
+        usageQuota,
+        forAll,
+        listProduct,
+        nominal,
+        keterangan,
+        canCombine,
+        isUnlimited,
+      } = req.body;
+
+      let checkVoucher = await Voucher.findOne({ where: { code } })
+
+      if (checkVoucher && +checkVoucher.id !== +req.params.id) {
+        throw { message: 'Code Voucher Existing' }
+      } else {
+        let newData = {
+          name,
+          code,
+          periodeStart,
+          periodeEnd,
+          typeVoucher,
+          discountMax,
+          minimumPurchase,
+          usageQuota,
+          forAll,
+          nominal,
+          keterangan,
+          canCombine,
+          isUnlimited,
+        }
+
+        if (req.file) newData.banner = req.file.path
+
+        await Voucher.update(
+          newData,
+          { where: { id: req.params.id } }
+        );
+
+        if (forAll === 'false') {
+          let newListProduct = JSON.parse(listProduct)
+          if (Array.isArray(newListProduct) && newListProduct.length > 0) {
+            let allVoucherProduk = await VoucherProduct.findAll({
+              where: { voucherId: req.params.id },
+            });
+
+            allVoucherProduk.forEach(async (el) => {
+              let isAvaiable = newListProduct.find(
+                (element) => element.id === el.productId
+              );
+
+              if (!isAvaiable)
+                await VoucherProduct.destroy({ where: { id: isAvaiable.id } });
+            });
+
+            newListProduct.forEach(async (el) => {
+              let isAvaiable = allVoucherProduk.find(
+                (element) => element.productId === el.id
+              );
+
+              if (!isAvaiable)
+                await VoucherProduct.create({
+                  voucherId: req.params.id,
+                  productId: el.id,
+                });
+            });
+          }
+        } else if (forAll === 'true') {
+          await VoucherProduct.destroy({ where: { voucherId: req.params.id } });
+        }
+
+        const getOne = await Voucher.findOne({
+          include: { model: VoucherProduct, include: Produk },
+        });
+        return res.status(201).json({ status: "success", getOne });
+      }
+    } catch (err) {
+      console.log(err)
+      res.status(500).json(err)
+    }
   };
 
   static deleteVoucher = async (req, res) => {
@@ -130,7 +179,7 @@ class Controller {
 
       let allVoucher, totalVoucher, query = {}, condition = {}
       if (limit) {
-        let offset = +page, condition = {}, query = {}
+        let offset = +page
         if (offset > 0) offset = offset * +limit
         query = { offset, limit: +limit }
       }
@@ -175,6 +224,19 @@ class Controller {
         }
       }
       // condition = { statusVoucher: status }
+
+      condition = {
+        ...condition,
+        [Op.or]: [
+          {
+            [Op.and]: [
+              { isUnlimited: 0 },
+              { usageQuota: { [Op.ne]: 0 } }
+            ]
+          },
+          { isUnlimited: 1 }
+        ]
+      }
 
       allVoucher = await Voucher.findAll({ where: condition, include: { model: VoucherProduct, include: Produk }, ...query, order: [['id', 'DESC']] });
       let getAllVoucher = await Voucher.findAll({ where: condition });

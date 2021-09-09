@@ -2,7 +2,7 @@ const multer = require("multer");
 const storage = multer.diskStorage({
   destination: "./",
   filename: function (req, file, cb) {
-    const newData = JSON.parse(req.body.data);
+    const newData = req.body.data ? JSON.parse(req.body.data) : null;
     const ext = file.mimetype.split("/")[1];
     cb(null, `assets/${file.originalname}-${Date.now()}.${ext}`);
   },

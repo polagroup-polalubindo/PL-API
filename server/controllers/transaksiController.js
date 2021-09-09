@@ -5,6 +5,7 @@ const {
   User,
   Komisi,
   TransaksiKomisi,
+  Voucher
 } = require("../models");
 const { Op } = require("sequelize");
 const cronJob = require("cron").CronJob;
@@ -14,11 +15,18 @@ class Controller {
     try {
       const allTransaksi = await Transaksi.findAll({
         where: { statusPembayaran: "menunggu pembayaran" },
-        include: {
-          where: { userId: req.user.id },
-          model: Cart,
-          include: Produk,
-        },
+        include: [
+          {
+            where: { userId: req.user.id },
+            model: Cart,
+            include: Produk,
+          }, {
+            model: Voucher,
+            as: 'voucher_1'
+          }, {
+            model: Voucher,
+            as: 'voucher_2'
+          }],
         order: [
           ['createdAt', 'DESC']
         ],
@@ -55,11 +63,15 @@ class Controller {
             ],
           },
         },
-        include: {
-          where: { userId: req.user.id },
-          model: Cart,
-          include: Produk,
-        },
+        include: [{
+          where: { userId: req.user.id }, model: Cart, include: Produk
+        }, {
+          model: Voucher,
+          as: 'voucher_1'
+        }, {
+          model: Voucher,
+          as: 'voucher_2'
+        }],
         order: [
           ['createdAt', 'DESC']
         ]
@@ -174,7 +186,15 @@ class Controller {
 
     const data = await Transaksi.findAll({
       where: condition,
-      include: { model: Cart, include: [Produk, User] },
+      include: [{
+        model: Cart, include: [Produk, User]
+      }, {
+        model: Voucher,
+        as: 'voucher_1'
+      }, {
+        model: Voucher,
+        as: 'voucher_2'
+      }],
       order: [
         ['createdAt', 'DESC']
       ],

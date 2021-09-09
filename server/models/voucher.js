@@ -16,6 +16,14 @@ module.exports = (sequelize, DataTypes) => {
       Voucher.hasMany(models.VoucherProduct, {
         foreignKey: "voucherId",
       });
+      Voucher.hasMany(models.Transaksi, {
+        as: 'voucher_1',
+        foreignKey: "voucher1",
+      });
+      Voucher.hasMany(models.Transaksi, {
+        as: 'voucher_2',
+        foreignKey: "voucher2",
+      });
       // Voucher.hasMany(models.Produk);
     }
   }
@@ -30,6 +38,11 @@ module.exports = (sequelize, DataTypes) => {
       minimumPurchase: DataTypes.INTEGER,
       usageQuota: DataTypes.INTEGER,
       forAll: DataTypes.BOOLEAN,
+      banner: DataTypes.STRING,
+      nominal: DataTypes.INTEGER,
+      keterangan: DataTypes.STRING,
+      canCombine: DataTypes.BOOLEAN,
+      isUnlimited: DataTypes.BOOLEAN,
     },
     {
       sequelize,

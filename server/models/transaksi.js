@@ -14,6 +14,8 @@ module.exports = (sequelize, DataTypes) => {
       Transaksi.belongsTo(models.Province, { foreignKey: 'recipientProvinceId' });
       Transaksi.belongsTo(models.City, { foreignKey: 'recipientCityId' });
       Transaksi.belongsTo(models.District, { foreignKey: 'recipientDistrictId' });
+      Transaksi.belongsTo(models.Voucher, { as: 'voucher_1', foreignKey: 'voucher1' });
+      Transaksi.belongsTo(models.Voucher, { as: 'voucher_2', foreignKey: 'voucher2' });
     }
   }
   Transaksi.init(
@@ -50,6 +52,9 @@ module.exports = (sequelize, DataTypes) => {
       itemQuantity: DataTypes.INTEGER,
       weight: DataTypes.STRING,
       expressType: DataTypes.STRING,
+      voucher1: DataTypes.INTEGER,
+      voucher2: DataTypes.INTEGER,
+      potonganHarga: DataTypes.INTEGER,
     },
     {
       sequelize,
