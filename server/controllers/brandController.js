@@ -1,10 +1,34 @@
 const { Brand, Produk } = require("../models");
+const Op = require('sequelize').Op
 
 class Controller {
   static getAllBrand = async (req, res) => {
     try {
-      const brandList = await Brand.findAll();
-      return res.status(200).json(brandList);
+      let {
+        page,
+        limit,
+        keyword,
+      } = req.query, condition = {}, query = {}
+      console.log(page, limit)
+      if (limit) {
+        let offset = +page
+        if (offset > 0) offset = offset * +limit
+        query = { offset, limit: +limit }
+      }
+      if (keyword) condition = {
+        namaBrand: { [Op.substring]: keyword }
+      }
+
+      const brandList = await Brand.findAll({
+        where: condition,
+        ...query
+      });
+
+      const AllBrandList = await Brand.findAll({
+        where: condition,
+      });
+      // console.log(AllBrandList)
+      return res.status(200).json({ brandList, totalBrand: AllBrandList.length });
     } catch (error) {
       return res.status(500).json(error);
     }
@@ -12,10 +36,11 @@ class Controller {
 
   static addNewBrand = async (req, res) => {
     try {
-      const { namaBrand, fotoBrand } = req.body;
-      const newBrand = await Brand.create({ namaBrand, fotoBrand });
+      const { namaBrand } = req.body;
+      const newBrand = await Brand.create({ namaBrand, fotoBrand: req.file ? req.file.path : null, });
       return res.status(201).json(newBrand);
     } catch (error) {
+      console.log(error)
       return res.status(500).json(error);
     }
   };
@@ -31,9 +56,15 @@ class Controller {
 
   static editBrand = async (req, res) => {
     try {
-      const { namaBrand, fotoBrand, komisiStatus, discountStatus } = req.body;
+      const { namaBrand } = req.body;
+      let newData = {
+        namaBrand
+      }
+
+      if (req.file) newData.fotoBrand = req.file.path
+
       const edited = await Brand.update(
-        { namaBrand, fotoBrand, komisiStatus, discountStatus },
+        newData,
         { where: { id: req.params.brandId } }
       );
       return res.status(200).json({ message: `success editing brand` });
