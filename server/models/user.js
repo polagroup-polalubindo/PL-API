@@ -14,9 +14,11 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       User.belongsToMany(models.Produk, { through: models.Cart });
       User.hasMany(models.Cart);
-      User.hasMany(models.Komisi, {foreignKey:'userId'});
+      User.hasMany(models.Komisi, { foreignKey: 'userId' });
       User.hasMany(models.TransaksiKomisi);
       User.hasMany(models.Alamat);
+      User.hasMany(models.Claim, { foreignKey: 'userId' })
+      User.hasMany(models.MachineRegister, { foreignKey: 'userId' })
     }
   }
   User.init(
