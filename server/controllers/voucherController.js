@@ -147,7 +147,7 @@ class Controller {
         const getOne = await Voucher.findOne({
           include: { model: VoucherProduct, include: Produk },
         });
-        return res.status(201).json({ status: "success", getOne });
+        return res.status(200).json({ status: "success", getOne });
       }
     } catch (err) {
       console.log(err)
@@ -242,7 +242,7 @@ class Controller {
       let getAllVoucher = await Voucher.findAll({ where: condition });
       totalVoucher = getAllVoucher.length
 
-      return res.status(201).json({ status: "success", data: allVoucher, totalVoucher });
+      return res.status(200).json({ status: "success", data: allVoucher, totalVoucher });
 
     } catch (err) {
       console.log(err)
@@ -254,7 +254,7 @@ class Controller {
     const data = await Voucher.findByPk(req.params.id, {
       include: { model: VoucherProduct, include: Produk },
     });
-    return res.status(201).json({ status: "success", data });
+    return res.status(200).json({ status: "success", data });
   };
 }
 

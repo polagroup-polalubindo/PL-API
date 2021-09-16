@@ -17,8 +17,7 @@ module.exports = (sequelize, DataTypes) => {
       User.hasMany(models.Komisi, { foreignKey: 'userId' });
       User.hasMany(models.TransaksiKomisi);
       User.hasMany(models.Alamat);
-      User.hasMany(models.Claim, { foreignKey: 'userId' })
-      User.hasMany(models.MachineRegister, { foreignKey: 'userId' })
+      User.hasMany(models.Warranty, { foreignKey: 'userId' })
     }
   }
   User.init(

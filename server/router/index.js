@@ -10,6 +10,7 @@ const api = require("./api-router");
 const alamat = require("./alamat-router");
 const voucher = require("./voucher-router");
 const area = require("./area-router");
+const warranty = require("./warranty-router");
 
 router.use(user);
 router.use(brand);
@@ -22,5 +23,6 @@ router.use(api);
 router.use(alamat);
 router.use(area);
 router.use(voucher);
+router.use(warranty);
 
 module.exports = router;

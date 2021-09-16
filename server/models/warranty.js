@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class MachineRegister extends Model {
+  class Warranty extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,18 +11,23 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      MachineRegister.belongsTo(models.User, { foreignKey: 'userId' })
+      Warranty.belongsTo(models.User, { foreignKey: 'userId' })
     }
   };
-  MachineRegister.init({
+  Warranty.init({
     noMachine: DataTypes.STRING,
     userId: DataTypes.INTEGER,
     purchaseDate: DataTypes.DATE,
     purchasePlace: DataTypes.STRING,
-    noInvoice: DataTypes.STRING
+    invoice: DataTypes.STRING,
+    hasClaim: DataTypes.BOOLEAN,
+    isValid: DataTypes.BOOLEAN,
+    claim: DataTypes.STRING,
+    issue: DataTypes.STRING,
+    claimDate: DataTypes.DATE
   }, {
     sequelize,
-    modelName: 'MachineRegister',
+    modelName: 'Warranty',
   });
-  return MachineRegister;
+  return Warranty;
 };

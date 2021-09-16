@@ -1,4 +1,4 @@
-const { Transaksi } = require('../models')
+const { Transaksi, Warranty } = require('../models')
 const Op = require('sequelize').Op
 const cronJob = require("cron").CronJob;
 const MD5 = require('md5');
@@ -23,6 +23,7 @@ async function rescheduleCRON() {
 
   scheduleCreateOrderIdExpress()
   handleScheduleCancelExpiredTransaction()
+  handleScheduleWarranty()
 }
 
 
@@ -219,7 +220,44 @@ async function cancelOrderIdExpress(waybillNo) {
 }
 
 
+async function handleScheduleWarranty() {
+  let allWarranty = await Warranty.findAll({ where: { isValid: 1 } })
+  await allWarranty.forEach(async (element) => {
+    await scheduleWarranty(element.id)
+  });
+}
+
+async function scheduleWarranty(id) {
+  try {
+    const dataSelected = await Warranty.findByPk(id)
+    let newDate = new Date(dataSelected.purchaseDate).setFullYear(new Date(dataSelected.purchaseDate).getFullYear() + 1)
+
+    console.log('START scheduleWarranty. ID WARRANTY', id)
+    var job = new cronJob(new Date(newDate), async function () {
+      const dataCurrentSelected = await Warranty.findByPk(id)
+
+      if (dataSelected.purchaseDate === dataCurrentSelected.purchaseDate) {
+        await Warranty.update(
+          {
+            isValid: 0
+          },
+          {
+            where: { id }
+          }
+        )
+        console.log('SUKSES scheduleWarranty. ID WARRANTY', id)
+      }
+    });
+    job.start();
+
+  } catch (err) {
+    console.log('ERROR scheduleWarranty. ID WARRANTY', id)
+    console.log(err)
+  }
+}
+
 module.exports = {
   rescheduleCRON,
-  scheduleCancelExpiredTransaction
+  scheduleCancelExpiredTransaction,
+  scheduleWarranty
 };

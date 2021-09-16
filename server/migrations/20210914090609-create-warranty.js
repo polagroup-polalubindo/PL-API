@@ -1,27 +1,42 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Claims', {
+    await queryInterface.createTable('Warranties', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      noMachine: {
+        type: Sequelize.STRING
+      },
       userId: {
         type: Sequelize.INTEGER
+      },
+      purchaseDate: {
+        type: Sequelize.DATE
+      },
+      purchasePlace: {
+        type: Sequelize.STRING
+      },
+      invoice: {
+        type: Sequelize.STRING
+      },
+      hasClaim: {
+        type: Sequelize.BOOLEAN
+      },
+      isValid: {
+        type: Sequelize.BOOLEAN
       },
       claim: {
         type: Sequelize.STRING
       },
-      kendala: {
+      issue: {
         type: Sequelize.STRING
       },
-      noMachine: {
-        type: Sequelize.STRING
-      },
-      date: {
-        type: Sequelize.STRING
+      claimDate: {
+        type: Sequelize.DATE
       },
       createdAt: {
         allowNull: false,
@@ -34,6 +49,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Claims');
+    await queryInterface.dropTable('Warranties');
   }
 };
