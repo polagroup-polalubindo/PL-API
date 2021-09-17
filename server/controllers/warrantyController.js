@@ -28,7 +28,8 @@ class Controller {
             purchaseDate: checkInvoice.createdAt,
             purchasePlace,
             invoice,
-            isValid: 1
+            isValid: 1,
+            statusClaim: 'Belum diklaim'
           });
         } else {
           throw { message: `invoice not exist` };
@@ -46,24 +47,29 @@ class Controller {
 
   static editWarranty = async (req, res) => {
     try {
+      console.log(req.body)
       const {
         noMachine,
         purchasePlace,
         invoice,
+        statusClaim,
       } = req.body;
+      let checkNoMachine, checkInvoice, data;
 
-      let checkNoMachine = await Warranty.findOne({ where: { noMachine } })
+      if (noMachine) checkNoMachine = await Warranty.findOne({ where: { noMachine } })
 
-      if (checkNoMachine && checkNoMachine?.id === req.params.id) {
+      if (noMachine && checkNoMachine && checkNoMachine?.id === req.params.id) {
         throw { message: `nomor machine already exist` };
       } else {
-        let checkInvoice = await Transaksi.findOne({ where: { invoice: invoice } })
-        if (checkInvoice) {
+        if (invoice) checkInvoice = await Transaksi.findOne({ where: { invoice: invoice } })
+        if ((invoice && checkInvoice) || !invoice) {
+          console.log(statusClaim)
           data = await Warranty.update({
             noMachine,
             userId: req.user.id,
             purchasePlace,
-            invoice
+            invoice,
+            statusClaim
           }, {
             where: {
               id: req.params.id
@@ -73,7 +79,7 @@ class Controller {
           throw { message: `invoice not exist` };
         }
       }
-      return res.status(200).json({ status: "success", getOne });
+      return res.status(200).json({ status: "success", data });
     } catch (err) {
       console.log(err)
       res.status(500).json(err)
@@ -98,7 +104,8 @@ class Controller {
         page,
         limit,
         keyword,
-        user
+        user,
+        status
       } = req.query
 
       let getWarranty, totalWarranty, query = {}, condition = {}
@@ -111,6 +118,7 @@ class Controller {
       if (keyword) {
         condition = {
           [Op.or]: [
+            { '$User.name$': { [Op.substring]: keyword } },
             { noMachine: { [Op.substring]: keyword } },
             { invoice: { [Op.substring]: keyword } },
           ]
@@ -121,6 +129,13 @@ class Controller {
         condition = {
           ...condition,
           userId: user
+        }
+      }
+
+      if (status) {
+        condition = {
+          ...condition,
+          statusClaim: status
         }
       }
 
@@ -153,7 +168,8 @@ class Controller {
         claim,
         issue,
         claimDate,
-        hasClaim: 1
+        hasClaim: 1,
+        statusClaim: 'Pengajuan'
       }, {
         where: {
           id: req.params.id

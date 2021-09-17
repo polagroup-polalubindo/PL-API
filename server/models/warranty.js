@@ -24,7 +24,8 @@ module.exports = (sequelize, DataTypes) => {
     isValid: DataTypes.BOOLEAN,
     claim: DataTypes.STRING,
     issue: DataTypes.STRING,
-    claimDate: DataTypes.DATE
+    claimDate: DataTypes.DATE,
+    statusClaim: DataTypes.STRING, // Belum diklaim, Pengajuan, Sedang diproses, Sudah diklaim
   }, {
     sequelize,
     modelName: 'Warranty',
