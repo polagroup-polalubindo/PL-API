@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Warranty.belongsTo(models.User, { foreignKey: 'userId' })
+      Warranty.belongsTo(models.Machine, { foreignKey: 'noMachine' })
     }
   };
   Warranty.init({

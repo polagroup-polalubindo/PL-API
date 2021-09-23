@@ -9,7 +9,7 @@ class Controller {
         limit,
         keyword,
       } = req.query, condition = {}, query = {}
-      console.log(page, limit)
+
       if (limit) {
         let offset = +page
         if (offset > 0) offset = offset * +limit

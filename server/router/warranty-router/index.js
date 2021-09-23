@@ -7,6 +7,6 @@ warranty.get("/warranty", authentication, controller.getAllWarranty);
 warranty.get("/warranty/:id", controller.getOneWarranty);
 warranty.put("/warranty/:id", authentication, controller.editWarranty);
 warranty.put("/warranty/:id/claim", controller.claimWarranty);
-warranty.delete("/warranty/:id", authentication, controller.deleteWarranty);
+warranty.delete("/warranty/:id", controller.deleteWarranty);
 
 module.exports = warranty;

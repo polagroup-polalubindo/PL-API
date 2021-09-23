@@ -1,39 +1,37 @@
 const {
-  Warranty, Transaksi, User,
+  Warranty, User, Machine
 } = require("../models");
 const Op = require('sequelize').Op
 const { scheduleWarranty } = require('../helpers/scheduler')
 
 class Controller {
   static tambahWarranty = async (req, res) => {
-    console.log("MASUK")
     try {
       const {
         noMachine,
         purchasePlace,
+        purchaseDate,
         invoice,
       } = req.body;
       let data;
 
-      let checkNoMachine = await Warranty.findOne({ where: { noMachine } })
+      let checkMachineHasRegister = await Warranty.findOne({ where: { noMachine } })
+      let checkMachine = await Machine.findOne({ where: { noMachine } })
 
-      if (checkNoMachine) {
+      if (checkMachineHasRegister) {
         throw { message: `nomor machine already exist` };
+      } else if (!checkMachine) {
+        throw { message: `machine number not registered` };
       } else {
-        let checkInvoice = await Transaksi.findOne({ where: { invoice } })
-        if (checkInvoice) {
-          data = await Warranty.create({
-            noMachine,
-            userId: req.user.id,
-            purchaseDate: checkInvoice.createdAt,
-            purchasePlace,
-            invoice,
-            isValid: 1,
-            statusClaim: 'Belum diklaim'
-          });
-        } else {
-          throw { message: `invoice not exist` };
-        }
+        data = await Warranty.create({
+          noMachine,
+          userId: req.user.id,
+          purchaseDate,
+          purchasePlace,
+          invoice,
+          isValid: 1,
+          statusClaim: 'Belum diklaim'
+        });
       }
 
       res.status(201).json({ status: "success", data });
@@ -47,37 +45,35 @@ class Controller {
 
   static editWarranty = async (req, res) => {
     try {
-      console.log(req.body)
       const {
         noMachine,
         purchasePlace,
+        purchaseDate,
         invoice,
         statusClaim,
       } = req.body;
-      let checkNoMachine, checkInvoice, data;
+      let checkMachineHasRegister, checkMachine, data;
 
-      if (noMachine) checkNoMachine = await Warranty.findOne({ where: { noMachine } })
+      if (noMachine) checkMachineHasRegister = await Warranty.findOne({ where: { noMachine } })
+      if (noMachine) checkMachine = await Machine.findOne({ where: { noMachine } })
 
-      if (noMachine && checkNoMachine && checkNoMachine?.id === req.params.id) {
+      if (noMachine && checkMachineHasRegister && checkMachineHasRegister?.id === req.params.id) {
         throw { message: `nomor machine already exist` };
+      } else if (!checkMachine) {
+        throw { message: `machine number not registered` };
       } else {
-        if (invoice) checkInvoice = await Transaksi.findOne({ where: { invoice: invoice } })
-        if ((invoice && checkInvoice) || !invoice) {
-          console.log(statusClaim)
-          data = await Warranty.update({
-            noMachine,
-            userId: req.user.id,
-            purchasePlace,
-            invoice,
-            statusClaim
-          }, {
-            where: {
-              id: req.params.id
-            }
-          });
-        } else {
-          throw { message: `invoice not exist` };
-        }
+        data = await Warranty.update({
+          noMachine,
+          userId: req.user.id,
+          purchasePlace,
+          purchaseDate,
+          invoice,
+          statusClaim
+        }, {
+          where: {
+            id: req.params.id
+          }
+        });
       }
       return res.status(200).json({ status: "success", data });
     } catch (err) {
@@ -94,6 +90,7 @@ class Controller {
         .status(200)
         .json({ status: "success", id_deleted: req.params.id });
     } catch (err) {
+      console.log(err)
       return res.status(500).json({ err })
     }
   };
