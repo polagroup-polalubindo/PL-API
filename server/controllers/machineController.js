@@ -107,9 +107,9 @@ class Controller {
           '$Warranty.isValid$': +isValid,
         }
       }
-
-      getMachine = await Machine.findAll({ where: condition, ...query, include: { model: Warranty, where: conditionWarranty } });
-      let getAllMachine = await Machine.findAll({ where: condition, include: { model: Warranty, where: conditionWarranty } });
+console.log(condition)
+      getMachine = await Machine.findAll({ where: condition, ...query, include: { model: Warranty } });
+      let getAllMachine = await Machine.findAll({ where: condition, include: { model: Warranty } });
       totalMachine = getAllMachine.length
 console.log(getMachine)
       return res.status(200).json({ status: "success", data: getMachine, totalMachine });
