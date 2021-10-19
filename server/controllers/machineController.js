@@ -93,7 +93,7 @@ class Controller {
             '$Warranty.hasClaim$': 0,
             '$Warranty.hasClaim$': null,
             '$Warranty.isValid$': 1,
-            '$Warranty': null,
+            'Warranty': null,
           }
         } else {
           condition = {
