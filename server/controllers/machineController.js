@@ -111,7 +111,7 @@ class Controller {
       getMachine = await Machine.findAll({ where: condition, ...query, include: { model: Warranty, where: conditionWarranty } });
       let getAllMachine = await Machine.findAll({ where: condition, include: { model: Warranty, where: conditionWarranty } });
       totalMachine = getAllMachine.length
-
+console.log(getMachine)
       return res.status(200).json({ status: "success", data: getMachine, totalMachine });
 
     } catch (err) {
