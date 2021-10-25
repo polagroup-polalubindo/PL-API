@@ -28,7 +28,6 @@ module.exports = (sequelize, DataTypes) => {
         unique: true,
         validate: {
           notEmpty: true,
-          isEmail: true,
           isUnique: async function (value) {
             const userData = await User.findOne({ where: { email: value } });
             if (userData) {
