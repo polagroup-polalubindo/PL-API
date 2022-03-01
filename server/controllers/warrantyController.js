@@ -59,7 +59,7 @@ class Controller {
 
       if (noMachine && checkMachineHasRegister && checkMachineHasRegister?.id === req.params.id) {
         throw { message: `nomor machine already exist` };
-      } else if (!checkMachine) {
+      } else if (noMachine && !checkMachine) {
         throw { message: `machine number not registered` };
       } else {
         data = await Warranty.update({
